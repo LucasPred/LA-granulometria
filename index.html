@@ -2,242 +2,213 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GRAVAFILT S.A. - Visor Experto IA Granulometría 0,9</title>
-    <style>
-        :root {
-            --primary: #0f172a;
-            --secondary: #0d9488;
-            --bg-dark: #020617;
-            --bg-light: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --border-color: #e2e8f0;
-            --danger: #dc2626;
-            --success: #16a34a;
-        }
-        * { box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            line-height: 1.5;
-        }
-        /* DOBLE CAPA DE SEGURIDAD */
-        #auth-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--bg-dark), var(--primary));
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            padding: 1rem;
-        }
-        .auth-card {
-            background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 1rem;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-        .auth-card h2 { margin-top: 0; color: var(--primary); }
-        .form-group { margin-bottom: 1.25rem; text-align: left; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.85rem; color: #475569; }
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            outline: none;
-        }
-        .form-control:focus { border-color: var(--secondary); }
-        
-        #app-container { display: none; }
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--bg-dark));
-            color: white;
-            padding: 1.25rem 1rem;
-            text-align: center;
-        }
-        header h1 { margin: 0; font-size: 1.3rem; }
-        header p { margin: 0.25rem 0 0 0; color: #94a3b8; font-size: 0.85rem; }
-
-        .container {
-            max-width: 800px;
-            margin: 1.5rem auto;
-            padding: 0 1rem;
-        }
-        .card {
-            background: var(--card-bg);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
-        }
-        .card h2 { color: var(--primary); margin-top: 0; font-size: 1.15rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
-        
-        .btn {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 0.85rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-        }
-        .btn:hover { background: #0f766e; }
-
-        .drop-zone {
-            border: 2px dashed var(--secondary);
-            border-radius: 0.75rem;
-            padding: 2rem 1rem;
-            text-align: center;
-            background: #f0fdf4;
-            cursor: pointer;
-        }
-        .preview-img { max-width: 100%; max-height: 280px; border-radius: 0.5rem; margin-top: 1rem; object-fit: contain; display: none; }
-        
-        .result-box {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            margin-top: 1.25rem;
-        }
-        .badge { display: inline-block; padding: 0.3rem 0.6rem; border-radius: 9999px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; }
-        .badge-success { background: #dcfce7; color: #166534; }
-        .badge-danger { background: #fee2e2; color: #991b1b; }
-        .badge-info { background: #e0f2fe; color: #0369a1; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAVAFILT S.A. - Sistema Integrado de Modulación y Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
 
-<!-- DOBLE CAPA DE SEGURIDAD -->
-<div id="auth-screen">
-    <div class="auth-card">
-        <h2>GRAVAFILT S.A.</h2>
-        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.5rem;">Seguridad de Acceso Restringido</p>
-        <div class="form-group">
-            <label>Usuario:</label>
-            <input type="text" id="auth-user" class="form-control" autocomplete="off">
-        </div>
-        <div class="form-group">
-            <label>Contraseña:</label>
-            <input type="password" id="auth-pass" class="form-control" autocomplete="off">
-        </div>
-        <button class="btn" onclick="validateAccess()">Ingresar al Panel</button>
-        <p id="auth-error" style="color: var(--danger); font-size: 0.8rem; margin-top: 1rem; display: none;">Credenciales incorrectas (lsantiago / gravafilt2026).</p>
-    </div>
-</div>
-
-<!-- PANEL PRINCIPAL UNICO -->
-<div id="app-container">
-    <header>
-        <h1>GRAVAFILT S.A. - Visor IA de Identificación Granulométrica</h1>
-        <p>Operador: <span id="lbl-user" style="font-weight: 600; color: #38bdf8;"></span></p>
-    </header>
-
-    <div class="container">
-        <div class="card">
-            <h2>Panel Principal: Identificación de Granulometría por Imagen</h2>
-            <p style="font-size: 0.85rem; color: #64748b;">Sube o fotografía la muestra de arena para que el motor analice dinámicamente el tipo de material sin valores predeterminados ciegos.</p>
-
-            <div class="drop-zone" onclick="document.getElementById('file-input').click()">
-                <p style="margin: 0; font-weight: 600; color: var(--secondary);">📷 Cargar Fotografía o Imagen de Arena</p>
-                <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b;">Compatible con cámaras de celulares y tablets</p>
-                <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="analyzeGranulometry(event)">
+    <!-- PANTALLA DE ACCESO - DOBLE CAPA DE SEGURIDAD -->
+    <div id="auth-screen" class="fixed inset-0 bg-slate-950 flex items-center justify-center z-50 p-4">
+        <div class="bg-slate-800 border border-slate-700 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center">
+            <h2 class="text-2xl font-bold text-amber-500 mb-2">GRAVAFILT S.A.</h2>
+            <p class="text-sm text-slate-400 mb-6">Sistema de Acceso Restringido - Doble Capa de Seguridad</p>
+            <div class="mb-4 text-left">
+                <label class="block text-xs font-semibold text-slate-300 mb-1 uppercase tracking-wider">Usuario Autorizado</label>
+                <input type="text" id="auth-user" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-100 focus:outline-none focus:border-amber-500" placeholder="Ej. lsantiago">
             </div>
-
-            <div style="text-align: center;">
-                <img id="img-preview" class="preview-img" alt="Muestra">
+            <div class="mb-6 text-left">
+                <label class="block text-xs font-semibold text-slate-300 mb-1 uppercase tracking-wider">Contraseña de Seguridad</label>
+                <input type="password" id="auth-pass" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-100 focus:outline-none focus:border-amber-500" placeholder="••••••••••••">
             </div>
-
-            <div id="analysis-container" style="display: none;">
-                <div class="result-box" id="result-content"></div>
-            </div>
+            <button onclick="validateLogin()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold p-3 rounded-lg transition-colors cursor-pointer">
+                Ingresar al Sistema
+            </button>
+            <p id="auth-error" class="text-red-400 text-xs mt-4 hidden">Credenciales inválidas. Acceso denegado (lsantiago / gravafilt2026).</p>
         </div>
     </div>
-</div>
 
-<script>
-    function validateAccess() {
-        const u = document.getElementById('auth-user').value.trim();
-        const p = document.getElementById('auth-pass').value.trim();
-        if (u === 'lsantiago' && p === 'gravafilt2026') {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('app-container').style.display = 'block';
-            document.getElementById('lbl-user').innerText = u;
-        } else {
-            document.getElementById('auth-error').style.display = 'block';
-        }
-    }
+    <!-- APLICACION PRINCIPAL -->
+    <div id="app-container" class="hidden p-6 max-w-7xl mx-auto">
+        <header class="flex flex-col md:flex-row justify-between items-center border-b border-slate-800 pb-4 mb-6 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-amber-500">SISTEMA DE MODULACIÓN DE ARENAS ESPECIALES</h1>
+                <p class="text-sm text-slate-400">Operador activo: <span id="lbl-user" class="text-amber-400 font-mono"></span> | Límite Crítico: 3.8% Humedad</p>
+            </div>
+            <div class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 flex items-center gap-2">
+                <span class="inline-block w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-xs font-mono">STATUS: ONLINE (PRODUCCIÓN)</span>
+            </div>
+        </header>
 
-    function analyzeGranulometry(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+        <!-- ALARMA CRITICA -->
+        <div id="alarm-box" class="hidden mb-6 p-4 bg-red-950 border border-red-500 text-red-200 rounded-xl flex items-center gap-3 animate-pulse">
+            <div>
+                <h3 class="font-bold text-lg">PROCESO DETENIDO: ALARMA CRÍTICA DE HUMEDAD</h3>
+                <p class="text-sm" id="alarm-msg">La humedad inicial supera el tope normativo del 3.8%.</p>
+            </div>
+        </div>
 
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            const img = document.getElementById('img-preview');
-            img.src = evt.target.result;
-            img.style.display = 'block';
-
-            const container = document.getElementById('analysis-container');
-            const content = document.getElementById('result-content');
-            container.style.display = 'block';
-            content.innerHTML = `<p style="color: var(--secondary); text-align:center;">Analizando características ópticas y granulométricas de <b>${file.name}</b>...</p>`;
-
-            setTimeout(() => {
-                const name = file.name.toLowerCase();
+        <!-- GRID PRINCIPAL -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Ingreso de Materia Prima -->
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
+                <h2 class="text-lg font-semibold mb-4 text-amber-400">Ingreso de Arena Gruesa</h2>
                 
-                // Lógica independiente basada en metadatos y rasgos del archivo subido
-                if (name.includes('2-4') || name.includes('grava') || name.includes('grueso')) {
-                    content.innerHTML = `
-                        <p><span class="badge badge-danger">MATERIAL IDENTIFICADO: GRAVA / FRACCIÓN 2-4 mm</span></p>
-                        <p style="font-size: 0.85rem; margin: 0.5rem 0;"><strong>Archivo:</strong> ${file.name}</p>
-                        <ul style="font-size: 0.85rem; padding-left: 1.2rem; margin: 0.5rem 0;">
-                            <li><strong>Clasificación real:</strong> Árido grueso fuera de especificación 0.9.</li>
-                            <li><strong>Desvío detectado:</strong> 100% de rechazo superior frente al corte objetivo de 0.90 mm.</li>
-                            <li><strong>Diagnóstico de Planta:</strong> Saturación o paso directo en zaranda primaria (Malla Scalping).</li>
-                        </ul>
-                        <p style="color: var(--danger); font-weight: bold; font-size: 0.85rem; margin-top: 0.5rem;">✖ NO CONFORME con la especificación técnica 0,9 / Cu 1.1</p>
-                    `;
-                } else if (name.includes('fino') || name.includes('polvo')) {
-                    content.innerHTML = `
-                        <p><span class="badge badge-info">MATERIAL IDENTIFICADO: ARENA FINA / COLADA</span></p>
-                        <p style="font-size: 0.85rem; margin: 0.5rem 0;"><strong>Archivo:</strong> ${file.name}</p>
-                        <ul style="font-size: 0.85rem; padding-left: 1.2rem; margin: 0.5rem 0;">
-                            <li><strong>Clasificación real:</strong> Fracción bajo calibre (&lt; 0.60 mm).</li>
-                            <li><strong>Desvío detectado:</strong> Exceso de finos que provocan caída de carga prematura.</li>
-                            <li><strong>Diagnóstico de Planta:</strong> Revisar ajuste en piso inferior de zaranda secundaria.</li>
-                        </ul>
-                        <p style="color: #0369a1; font-weight: bold; font-size: 0.85rem; margin-top: 0.5rem;">⚠ FUERA DE TOLERANCIA DE UNIFORMIDAD (Cu &gt; 1.1)</p>
-                    `;
-                } else {
-                    content.innerHTML = `
-                        <p><span class="badge badge-success">MATERIAL IDENTIFICADO: ARENA TÉCNICA 0,9 (CONFORME)</span></p>
-                        <p style="font-size: 0.85rem; margin: 0.5rem 0;"><strong>Archivo:</strong> ${file.name}</p>
-                        <ul style="font-size: 0.85rem; padding-left: 1.2rem; margin: 0.5rem 0;">
-                            <li><strong>Morfología:</strong> Granos limpios, homogéneos y subredondeados.</li>
-                            <li><strong>% Pasante Acumulado en 0.90 mm:</strong> ~50.2%</li>
-                            <li><strong>Coeficiente de Uniformidad (Cu):</strong> 1.10 (Estable y dentro del tope).</li>
-                        </ul>
-                        <p style="color: var(--success); font-weight: bold; font-size: 0.85rem; margin-top: 0.5rem;">✔ Parámetros de horno y tamizado estables y conformes.</p>
-                    `;
-                }
-            }, 1000);
-        };
-        reader.readAsDataURL(file);
-    }
-</script>
+                <div class="mb-6">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-slate-300">Humedad Inicial</span>
+                        <span id="val-humedad" class="font-mono font-bold text-green-400">2.5%</span>
+                    </div>
+                    <input type="range" id="input-humedad" min="0" max="6" step="0.1" value="2.5" oninput="updateProcess()" class="w-full accent-amber-500 bg-slate-700 h-2 rounded-lg cursor-pointer">
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                        <span>0% Min</span>
+                        <span class="text-red-400 font-bold">Tope: 3.8%</span>
+                        <span>6% Max</span>
+                    </div>
+                </div>
 
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-slate-300">Flujo de Alimentación</span>
+                        <span id="val-flujo" class="font-mono font-bold text-amber-400">50 Ton/h</span>
+                    </div>
+                    <input type="range" id="input-flujo" min="10" max="100" step="5" value="50" oninput="updateProcess()" class="w-full accent-amber-500 bg-slate-700 h-2 rounded-lg cursor-pointer">
+                </div>
+            </div>
+
+            <!-- Secado Rotativo -->
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl relative overflow-hidden">
+                <div id="status-bar-secador" class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
+                <h2 class="text-lg font-semibold mb-4 text-amber-400">Fase 1: Secado Rotativo</h2>
+                <div class="grid grid-cols-2 gap-4 mt-2">
+                    <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700 text-center">
+                        <span class="text-xs text-slate-400 block mb-1">Temp. Modulada</span>
+                        <span id="val-temp" class="text-2xl font-mono font-bold text-slate-100">135°C</span>
+                    </div>
+                    <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700 text-center">
+                        <span class="text-xs text-slate-400 block mb-1">Quemador</span>
+                        <span id="val-quemador" class="text-sm font-bold text-green-400">MODULANDO</span>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-400 mt-6 bg-slate-900/30 p-3 rounded border border-slate-700/50">
+                    Control térmico reactivo para garantizar humedad remanente inferior al 0.1% antes del tamizado.
+                </p>
+            </div>
+
+            <!-- Tamizado Clasificador -->
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
+                <h2 class="text-lg font-semibold mb-4 text-amber-400">Fase 2: Tamizado Clasificador</h2>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                        <span class="text-sm text-slate-300">Frecuencia Vibración</span>
+                        <span id="val-freq" class="font-mono font-bold text-amber-400">45 Hz</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                        <span class="text-sm text-slate-300">Eficiencia de Separación</span>
+                        <span id="val-eficiencia" class="font-mono font-bold text-green-400">94%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRAFICO HISTORICO -->
+        <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
+            <h2 class="text-lg font-semibold mb-4 text-amber-400">Historial en Tiempo Real de Humedad vs Límite Crítico (3.8%)</h2>
+            <div class="h-64 w-full">
+                <canvas id="chartHumedad"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chartInstance = null;
+
+        function validateLogin() {
+            const user = document.getElementById('auth-user').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+            const err = document.getElementById('auth-error');
+
+            if (user === 'lsantiago' && pass === 'gravafilt2026') {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                document.getElementById('lbl-user').innerText = user;
+                initChart();
+            } else {
+                err.classList.remove('hidden');
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('chartHumedad').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['14:00', '14:15', '14:30', '14:45', '15:00'],
+                    datasets: [{
+                        label: 'Humedad de Entrada (%)',
+                        data: [2.1, 2.5, 2.8, 2.4, 2.5],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }, {
+                        label: 'Límite Máximo (3.8%)',
+                        data: [3.8, 3.8, 3.8, 3.8, 3.8],
+                        borderColor: '#dc2626',
+                        borderDash: [5, 5],
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 0, max: 6, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+                    },
+                    plugins: { legend: { labels: { color: '#f8fafc' } } }
+                }
+            });
+        }
+
+        function updateProcess() {
+            const humedad = parseFloat(document.getElementById('input-humedad').value);
+            const flujo = parseInt(document.getElementById('input-flujo').value);
+            
+            document.getElementById('val-humedad').innerText = humedad.toFixed(1) + '%';
+            document.getElementById('val-flujo').innerText = flujo + ' Ton/h';
+
+            const alarmBox = document.getElementById('alarm-box');
+            const statusBar = document.getElementById('status-bar-secador');
+            const valTemp = document.getElementById('val-temp');
+            const valQuemador = document.getElementById('val-quemador');
+            const valFreq = document.getElementById('val-freq');
+            const valEficiencia = document.getElementById('val-eficiencia');
+
+            if (humedad > 3.8) {
+                alarmBox.classList.remove('hidden');
+                statusBar.className = 'absolute top-0 left-0 w-1 h-full bg-red-500';
+                valTemp.innerText = '0°C';
+                valQuemador.innerText = 'APAGADO (INTERLOCK)';
+                valQuemador.className = 'text-sm font-bold text-red-400';
+                valFreq.innerText = '0 Hz';
+                valEficiencia.innerText = '0%';
+                document.getElementById('val-humedad').className = 'font-mono font-bold text-red-400';
+            } else {
+                alarmBox.classList.add('hidden');
+                statusBar.className = 'absolute top-0 left-0 w-1 h-full bg-green-500';
+                const tempCalc = Math.min(160, Math.round(100 + (humedad * 15)));
+                const freqCalc = Math.min(60, Math.round(35 + (flujo * 0.2)));
+                valTemp.innerText = tempCalc + '°C';
+                valQuemador.innerText = 'MODULANDO';
+                valQuemador.className = 'text-sm font-bold text-green-400';
+                valFreq.innerText = freqCalc + ' Hz';
+                valEficiencia.innerText = '94%';
+                document.getElementById('val-humedad').className = 'font-mono font-bold text-green-400';
+            }
+        }
+    </script>
 </body>
 </html>
