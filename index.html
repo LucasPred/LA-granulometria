@@ -1,0 +1,742 @@
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gravafilt 2026 - Control Granulométrico 0.9</title>
+    <!-- Tailwind CSS for modern, sleek, responsive UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for real-time graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        industrial: {
+                            50: '#f4f6f8',
+                            100: '#e2e8f0',
+                            600: '#0284c7',
+                            750: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- LOGIN OVERLAY (Double Security Layer 1 & 2) -->
+    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 bg-opacity-95 p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-sky-500 to-cyan-400"></div>
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-sky-950 border border-sky-600 text-sky-400 mb-3 shadow-inner">
+                    <i class="fa-solid fa-shield-halved text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold tracking-tight text-white">GRAVAFILT 2026</h2>
+                <p class="text-xs text-slate-400 uppercase tracking-widest mt-1">Doble Capa de Seguridad - Acceso Restringido</p>
+            </div>
+            
+            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Usuario Autorizado</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" id="username" required class="w-full bg-slate-950 border border-slate-700 rounded-lg py-3 pl-10 pr-4 text-white focus:outline-none focus:border-sky-500 text-sm" placeholder="Ingrese usuario">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Contraseña de Seguridad</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" id="password" required class="w-full bg-slate-950 border border-slate-700 rounded-lg py-3 pl-10 pr-4 text-white focus:outline-none focus:border-sky-500 text-sm" placeholder="••••••••••••">
+                    </div>
+                </div>
+                <div id="login-error" class="hidden text-rose-400 text-xs text-center font-medium bg-rose-950/50 p-2 rounded border border-rose-800">
+                    Credenciales incorrectas. Verifique usuario (lsantiago) y contraseña.
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-sky-600 to-cyan-600 hover:from-sky-500 hover:to-cyan-500 text-white font-semibold py-3 rounded-lg shadow-lg transition-all text-sm tracking-wider uppercase">
+                    Acceder al Sistema Central
+                </button>
+            </form>
+            <div class="mt-6 text-center text-[10px] text-slate-500">
+                Sistema Operativo Autónomo de Precisión Granulométrica 0.9 • Coeficiente Cu 1.1
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER (Hidden until login) -->
+    <div id="app-container" class="hidden flex flex-col min-h-screen">
+        
+        <!-- HEADER & NAVIGATION -->
+        <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-sky-600 text-white p-2.5 rounded-lg shadow-md">
+                        <i class="fa-solid fa-industry text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                            GRAVAFILT 2026 <span class="text-[10px] bg-sky-950 text-sky-400 border border-sky-800 px-2 py-0.5 rounded-full font-mono">Modo Experto 0.9 / Cu 1.1</span>
+                        </h1>
+                        <p class="text-xs text-slate-400">Sistema Central de Control de Extracción, Secado y Clasificación</p>
+                    </div>
+                </div>
+                
+                <!-- Navigation Tabs -->
+                <nav class="flex flex-wrap gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-600 text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-gauge"></i> Panel Central
+                    </button>
+                    <button onclick="switchTab('simulator')" id="nav-simulator" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-camera"></i> IA Simulador Visor
+                    </button>
+                    <button onclick="switchTab('extraction')" id="nav-extraction" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-water"></i> 1. Extracción
+                    </button>
+                    <button onclick="switchTab('silos')" id="nav-silos" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-hourglass-half"></i> 2-3. Silos y Acopio
+                    </button>
+                    <button onclick="switchTab('drying')" id="nav-drying" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-fire"></i> 4. Secado
+                    </button>
+                    <button onclick="switchTab('sieving')" id="nav-sieving" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-filter"></i> 5-6. Zarandas Tecmaq
+                    </button>
+                    <button onclick="switchTab('maintenance')" id="nav-maintenance" class="nav-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-screwdriver-wrench"></i> Mantenimiento
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+
+            <!-- TAB 1: CENTRAL DASHBOARD -->
+            <div id="tab-dashboard" class="tab-content active space-y-6">
+                <!-- Status Banner -->
+                <div class="bg-gradient-to-r from-sky-950 via-slate-900 to-slate-900 border border-sky-800/60 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                    <div class="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-sky-600/10 via-transparent to-transparent pointer-events-none"></div>
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1 rounded-full font-mono inline-flex items-center gap-1.5 mb-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Planta Operativa Estable
+                            </span>
+                            <h2 class="text-2xl font-extrabold text-white">Centralizador de Variables de Proceso</h2>
+                            <p class="text-sm text-slate-400 mt-1">Monitoreo en tiempo real orientado a mantener estrictamente la Especificación 0.9 y Coeficiente de Uniformidad Cu ≤ 1.1.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="switchTab('simulator')" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-xl font-semibold text-xs transition flex items-center gap-2 shadow-lg shadow-sky-900/40">
+                                <i class="fa-solid fa-camera-retro"></i> Abrir Visor IA Simulador
+                            </button>
+                            <button onclick="triggerReset()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl font-semibold text-xs transition flex items-center gap-2 border border-slate-700">
+                                <i class="fa-solid fa-rotate"></i> Recalibrar Lazo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-lg relative">
+                        <div class="text-slate-400 text-xs font-semibold uppercase">Objetivo Granulométrico</div>
+                        <div class="text-3xl font-black text-white mt-1">0.90 <span class="text-xs font-normal text-sky-400">mm (Nominal)</span></div>
+                        <div class="mt-3 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-2">
+                            <span>Tolerancia:</span>
+                            <span class="text-emerald-400 font-mono">±0.02 mm</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-lg relative">
+                        <div class="text-slate-400 text-xs font-semibold uppercase">Coef. Uniformidad (Cu)</div>
+                        <div class="text-3xl font-black text-sky-400 mt-1">1.10 <span class="text-xs font-normal text-slate-400">Max</span></div>
+                        <div class="mt-3 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-2">
+                            <span>Estado actual:</span>
+                            <span class="text-emerald-400 font-mono">Óptimo (1.08)</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-lg relative">
+                        <div class="text-slate-400 text-xs font-semibold uppercase">Humedad Salida Horno</div>
+                        <div class="text-3xl font-black text-white mt-1">&lt; 0.05% <span class="text-xs font-normal text-emerald-400">(Meta &lt;0.1%)</span></div>
+                        <div class="mt-3 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-2">
+                            <span>Temp. Salida:</span>
+                            <span class="text-sky-300 font-mono">74.2 °C</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-lg relative">
+                        <div class="text-slate-400 text-xs font-semibold uppercase">Carga Zarandas Tecmaq</div>
+                        <div class="text-3xl font-black text-white mt-1">8.2 <span class="text-xs font-normal text-slate-400">t/h / m²</span></div>
+                        <div class="mt-3 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-2">
+                            <span>Eficiencia corte:</span>
+                            <span class="text-emerald-400 font-mono">98.5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Live Parameters & Quick Links -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left 2 Cols: Main Variables Summary Table -->
+                    <div class="lg:col-span-2 bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-lg">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-sky-500"></i> Matriz de Control de Variables Críticas
+                        </h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="border-b border-slate-800 text-slate-400 uppercase tracking-wider">
+                                        <th class="py-3 px-3 font-semibold">Proceso / Etapa</th>
+                                        <th class="py-3 px-3 font-semibold">Parámetro Clave</th>
+                                        <th class="py-3 px-3 font-semibold">Valor Operativo</th>
+                                        <th class="py-3 px-3 font-semibold">Rango Objetivo</th>
+                                        <th class="py-3 px-3 font-semibold text-right">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/60 font-mono text-slate-300">
+                                    <tr>
+                                        <td class="py-3 px-3 text-white font-sans font-medium">1. Extracción Río</td>
+                                        <td class="py-3 px-3">Control Batimétrico / Frecuencia</td>
+                                        <td class="py-3 px-3">2 muestras/turno</td>
+                                        <td class="py-3 px-3">Mínimo 2</td>
+                                        <td class="py-3 px-3 text-right"><span class="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded text-[10px]">OK</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-3 text-white font-sans font-medium">2. Silos Desagüe</td>
+                                        <td class="py-3 px-3">Tiempo Retención Atrición</td>
+                                        <td class="py-3 px-3 font-bold text-sky-400">18.5 horas</td>
+                                        <td class="py-3 px-3">&gt; 16.0 horas</td>
+                                        <td class="py-3 px-3 text-right"><span class="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded text-[10px]">OK</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-3 text-white font-sans font-medium">3. Ingreso Secado</td>
+                                        <td class="py-3 px-3">Humedad de Ingreso</td>
+                                        <td class="py-3 px-3">3.8%</td>
+                                        <td class="py-3 px-3">&le; 4.5%</td>
+                                        <td class="py-3 px-3 text-right"><span class="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded text-[10px]">OK</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-3 text-white font-sans font-medium">4. Horno Rotativo</td>
+                                        <td class="py-3 px-3">Temp. Combustión / Giro</td>
+                                        <td class="py-3 px-3">205°C / 4.2 RPM</td>
+                                        <td class="py-3 px-3">180-220°C / 3.5-5.0</td>
+                                        <td class="py-3 px-3 text-right"><span class="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded text-[10px]">OK</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-3 text-white font-sans font-medium">5. Zaranda Primaria</td>
+                                        <td class="py-3 px-3">Frecuencia / Abertura Mallas</td>
+                                        <td class="py-3 px-3">1050 RPM / 2.0 - 1.2 mm</td>
+                                        <td class="py-3 px-3">950-1150 RPM</td>
+                                        <td class="py-3 px-3 text-right"><span class="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded text-[10px]">OK</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-3 text-white font-sans font-medium">6. Zaranda Secundaria</td>
+                                        <td class="py-3 px-3">Frecuencia / Malla Corte 0.9</td>
+                                        <td class="py-3 px-3 font-bold text-sky-400">1350 RPM / 0.90 mm</td>
+                                        <td class="py-3 px-3">1200-1450 RPM</td>
+                                        <td class="py-3 px-3 text-right"><span class="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded text-[10px]">OK</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right Col: Quick Access Microsites & Security Status -->
+                    <div class="space-y-6">
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-lg">
+                            <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-sky-500"></span> Micrositios Especializados
+                            </h3>
+                            <p class="text-xs text-slate-400 mb-4">Acceda al detalle técnico específico de cada fase según el manual experto:</p>
+                            <div class="space-y-2">
+                                <button onclick="switchTab('extraction')" class="w-full text-left px-3 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-200 flex items-center justify-between transition">
+                                    <span><i class="fa-solid fa-water text-sky-400 mr-2"></i> 1. Extracción de Arena de Río</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+                                </button>
+                                <button onclick="switchTab('silos')" class="w-full text-left px-3 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-200 flex items-center justify-between transition">
+                                    <span><i class="fa-solid fa-hourglass-half text-sky-400 mr-2"></i> 2-3. Silos y Acopio (Atrición)</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+                                </button>
+                                <button onclick="switchTab('drying')" class="w-full text-left px-3 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-200 flex items-center justify-between transition">
+                                    <span><i class="fa-solid fa-fire text-sky-400 mr-2"></i> 4. Horno Rotativo y Térmica</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+                                </button>
+                                <button onclick="switchTab('sieving')" class="w-full text-left px-3 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-200 flex items-center justify-between transition">
+                                    <span><i class="fa-solid fa-filter text-sky-400 mr-2"></i> 5-6. Zarandas Tecmaq y Mallas</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+                                </button>
+                                <button onclick="switchTab('maintenance')" class="w-full text-left px-3 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-200 flex items-center justify-between transition">
+                                    <span><i class="fa-solid fa-screwdriver-wrench text-sky-400 mr-2"></i> Mantenimiento e Instructivos</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-slate-950 to-sky-950/30 border border-slate-800 rounded-xl p-5 shadow-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-sky-500/10 text-sky-400 p-3 rounded-lg border border-sky-500/30">
+                                    <i class="fa-solid fa-fingerprint text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400 font-semibold uppercase">Sesión Segura Activa</div>
+                                    <div class="text-sm font-bold text-white font-mono">lsantiago</div>
+                                </div>
+                            </div>
+                            <button onclick="handleLogout()" class="mt-4 w-full bg-slate-900 hover:bg-rose-950/40 text-slate-300 hover:text-rose-300 border border-slate-800 hover:border-rose-900 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: SIMULATOR & AI VIEWER -->
+            <div id="tab-simulator" class="tab-content space-y-6">
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                        <div>
+                            <span class="bg-sky-500/10 text-sky-400 border border-sky-500/30 text-xs px-3 py-1 rounded-full font-mono inline-flex items-center gap-1.5 mb-2">
+                                <i class="fa-solid fa-brain"></i> Inteligencia Artificial Creativa & Visor en Vivo
+                            </span>
+                            <h2 class="text-2xl font-bold text-white">Simulador de Diagnóstico Granulométrico por Imagen</h2>
+                            <p class="text-xs text-slate-400 mt-1">Cargue o capture una fotografía de la arena en planta para análisis instantáneo caso por caso (Curva, % Pasante Acumulado, % Retenido, Desvíos respecto a 0.9 y Cu 1.1).</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Left: Image Upload / Camera Input -->
+                        <div class="space-y-4">
+                            <div class="border-2 border-dashed border-slate-700 hover:border-sky-500 rounded-2xl p-6 text-center bg-slate-900/50 transition flex flex-col items-center justify-center min-h-[280px] relative group cursor-pointer" onclick="document.getElementById('image-input').click()">
+                                <input type="file" id="image-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                                <div id="upload-placeholder" class="space-y-3">
+                                    <div class="w-16 h-16 rounded-full bg-sky-950 border border-sky-700 text-sky-400 flex items-center justify-center mx-auto shadow-inner group-hover:scale-110 transition">
+                                        <i class="fa-solid fa-camera text-2xl"></i>
+                                    </div>
+                                    <div class="text-sm font-semibold text-white">Tome una fotografía o cargue imagen de arena</div>
+                                    <p class="text-xs text-slate-400 max-w-xs mx-auto">Compatible con dispositivos móviles, tablets y PC. Análisis neural directo sin patrones predeterminados.</p>
+                                </div>
+                                <div id="image-preview-container" class="hidden w-full h-full absolute inset-0 bg-slate-950 rounded-2xl overflow-hidden flex items-center justify-center p-2">
+                                    <img id="preview-img" class="max-h-[260px] object-contain rounded-lg" alt="Arena analizada">
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-3">
+                                <button onclick="document.getElementById('image-input').click()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2.5 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-upload"></i> Seleccionar Archivo
+                                </button>
+                                <button onclick="runAISimulation()" id="analyze-btn" disabled class="flex-1 bg-sky-600 hover:bg-sky-500 disabled:bg-slate-800 disabled:text-slate-600 text-white py-2.5 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-sky-900/40">
+                                    <i class="fa-solid fa-microchip"></i> Ejecutar Diagnóstico IA
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right: AI Diagnostic Results & Curves -->
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                                    <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                                        <i class="fa-solid fa-chart-line text-sky-400"></i> Resultados del Diagnóstico IA
+                                    </h3>
+                                    <span id="ai-status-badge" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">Esperando Muestra</span>
+                                </div>
+
+                                <div id="ai-results-placeholder" class="text-center py-12 text-slate-500 text-xs space-y-2">
+                                    <i class="fa-solid fa-eye text-3xl mb-1 text-slate-600"></i>
+                                    <p>Cargue una imagen de arena para generar el encuadre granulométrico, desvíos y solución en tiempo real.</p>
+                                </div>
+
+                                <div id="ai-results-content" class="hidden space-y-4">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                            <div class="text-[10px] text-slate-400 uppercase">Módulo / Tamaño Medio</div>
+                                            <div id="res-d50" class="text-lg font-bold text-sky-400 mt-0.5 font-mono">0.91 mm</div>
+                                        </div>
+                                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                            <div class="text-[10px] text-slate-400 uppercase">Coef. Uniformidad (Cu)</div>
+                                            <div id="res-cu" class="text-lg font-bold text-emerald-400 mt-0.5 font-mono">1.09</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                                        <div class="text-xs font-semibold text-slate-300">Diagnóstico Caso por Caso:</div>
+                                        <p id="res-diagnosis" class="text-xs text-slate-400 leading-relaxed">
+                                            Material dentro de los parámetros esperados. Distribución uniforme sin sobretamaños críticos ni exceso de finos.
+                                        </p>
+                                    </div>
+
+                                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                        <div class="text-xs font-semibold text-slate-300 mb-2">Desvíos vs Expectativa (0.9 / Cu 1.1):</div>
+                                        <div class="space-y-1.5 text-xs font-mono">
+                                            <div class="flex justify-between">
+                                                <span class="text-slate-400">Desvío Abertura 0.9mm:</span>
+                                                <span id="res-dev-sz" class="text-emerald-400">+1.1% (Tolerado)</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-slate-400">% Pasante Acumulado (0.9mm):</span>
+                                                <span id="res-pasante" class="text-sky-300">51.4%</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-slate-400">% Retenido Acumulado:</span>
+                                                <span id="res-retenido" class="text-sky-300">48.6%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-sky-950/30 border border-sky-800/50 p-3 rounded-xl">
+                                        <div class="text-xs font-semibold text-sky-300 mb-1 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-lightbulb"></i> Solución Recomendada por IA:
+                                        </div>
+                                        <p id="res-solution" class="text-xs text-slate-300">
+                                            Mantener frecuencia de zaranda secundaria en 1350 RPM y revisar tensión en malla intermedia de 0.90 mm.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-[10px] text-slate-500 text-center mt-4">
+                                Motor analítico neuronal entrenado con datos de atrición, secado y cribado Tecmaq.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: EXTRACTION MICROSITE -->
+            <div id="tab-extraction" class="tab-content space-y-6">
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="border-b border-slate-800 pb-4">
+                        <span class="text-sky-400 text-xs font-mono font-semibold uppercase tracking-wider">Micrositio Técnico 1</span>
+                        <h2 class="text-2xl font-bold text-white mt-1">Extracción de Arena de Río (Entorno Granulométrico)</h2>
+                        <p class="text-xs text-slate-400 mt-1">Captación del recurso base minimizando la presencia inicial de limos, arcillas y sobretamaños orgánicos.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <div class="w-10 h-10 rounded-lg bg-sky-950 border border-sky-800 flex items-center justify-center text-sky-400">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                            </div>
+                            <h3 class="text-sm font-bold text-white">Control Batimétrico</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Realizar la succión o destape en bancos de río activos con control batimétrico previo, evitando zonas con alto contenido de material coloidal o materia orgánica en descomposición.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <div class="w-10 h-10 rounded-lg bg-sky-950 border border-sky-800 flex items-center justify-center text-sky-400">
+                                <i class="fa-solid fa-gauge-high"></i>
+                            </div>
+                            <h3 class="text-sm font-bold text-white">Velocidad de Bombeo</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Mantener una velocidad de bombeo y succión regulada para evitar la segregación hidráulica excesiva en la tubería de transporte primario.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <div class="w-10 h-10 rounded-lg bg-sky-950 border border-sky-800 flex items-center justify-center text-sky-400">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                            </div>
+                            <h3 class="text-sm font-bold text-white">Control en Puerto</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Establecer control granulométrico de recepción en puerto o muelle con frecuencia mínima de 2 muestras por turno para detectar variaciones en el módulo de finura de la vena fluvial.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: SILOS & STOCKPILE MICROSITE -->
+            <div id="tab-silos" class="tab-content space-y-6">
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="border-b border-slate-800 pb-4">
+                        <span class="text-sky-400 text-xs font-mono font-semibold uppercase tracking-wider">Micrositio Técnico 2 y 3</span>
+                        <h2 class="text-2xl font-bold text-white mt-1">Atrición en Silos y Acopio de Materia Prima</h2>
+                        <p class="text-xs text-slate-400 mt-1">Reducción pasiva de humedad superficial y frotamiento intergranular natural (atrición estática por carga hidrostática).</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-hourglass-half text-sky-400"></i> Silos de Desagüe (&gt;16 Horas)
+                            </h3>
+                            <ul class="space-y-2 text-xs text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+                                    <span><strong>Tiempo de retención:</strong> Respetar estrictamente el periodo mínimo de 16 horas de reposo continuo en silos para permitir drenaje gravitacional efectivo.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+                                    <span><strong>Gestión de descargas:</strong> Rotar silos en secuencia (carga, reposo, descarga) evitando lotes con tiempos inferiores al especificado.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-mountain text-sky-400"></i> Acopio al Lado de Planta
+                            </h3>
+                            <ul class="space-y-2 text-xs text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+                                    <span><strong>Superficies impermeabilizadas:</strong> Proveer pendientes controladas y sistemas de recogida de escorrentías.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+                                    <span><strong>Delimitación:</strong> Sectores independientes para material de silos y fresco para prevenir contaminación cruzada de humedades.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: DRYING MICROSITE -->
+            <div id="tab-drying" class="tab-content space-y-6">
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="border-b border-slate-800 pb-4">
+                        <span class="text-sky-400 text-xs font-mono font-semibold uppercase tracking-wider">Micrositio Técnico 4</span>
+                        <h2 class="text-2xl font-bold text-white mt-1">Operación de Secado y Horno Rotativo</h2>
+                        <p class="text-xs text-slate-400 mt-1">Control riguroso de temperatura, humedad de ingreso (&le;4.5%) y salida (&lt;0.1%).</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 font-mono">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1">
+                            <div class="text-[10px] text-slate-400 uppercase">Temperatura del Horno</div>
+                            <div class="text-xl font-bold text-white">180 - 220 °C</div>
+                            <div class="text-[11px] text-slate-500 font-sans mt-1">Zona de combustión / descarga</div>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1">
+                            <div class="text-[10px] text-slate-400 uppercase">Frecuencia de Giro</div>
+                            <div class="text-xl font-bold text-sky-400">3.5 - 5.0 RPM</div>
+                            <div class="text-[11px] text-slate-500 font-sans mt-1">Optimiza tiempo de residencia y cortina</div>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1">
+                            <div class="text-[10px] text-slate-400 uppercase">Temp. Gases Chimenea</div>
+                            <div class="text-xl font-bold text-white">90 - 110 °C</div>
+                            <div class="text-[11px] text-slate-500 font-sans mt-1">Evita punto de rocío ácido y condensación</div>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1">
+                            <div class="text-[10px] text-slate-400 uppercase">Pendiente del Horno</div>
+                            <div class="text-xl font-bold text-white">2.5% - 3.0%</div>
+                            <div class="text-[11px] text-slate-500 font-sans mt-1">Avance por gravedad controlado</div>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1">
+                            <div class="text-[10px] text-slate-400 uppercase">Exceso de Oxígeno</div>
+                            <div class="text-xl font-bold text-emerald-400">3.0% - 5.0%</div>
+                            <div class="text-[11px] text-slate-500 font-sans mt-1">Combustión completa sin enfriar lecho</div>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1">
+                            <div class="text-[10px] text-slate-400 uppercase">Humedad Producto Seco</div>
+                            <div class="text-xl font-bold text-emerald-400">&lt; 0.1%</div>
+                            <div class="text-[11px] text-slate-500 font-sans mt-1">Salida de arena a 65°C - 80°C</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: SIEVING & TECMAQ MICROSITE -->
+            <div id="tab-sieving" class="tab-content space-y-6">
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="border-b border-slate-800 pb-4">
+                        <span class="text-sky-400 text-xs font-mono font-semibold uppercase tracking-wider">Micrositio Técnico 5 y 6</span>
+                        <h2 class="text-2xl font-bold text-white mt-1">Sistema de Tamizado y Clasificación Granulométrica (Tecmaq)</h2>
+                        <p class="text-xs text-slate-400 mt-1">Configuración exacta para granulometría 0.9 y coeficiente de uniformidad tope de 1.1.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Primaria -->
+                        <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group text-sky-400"></i> A. Zaranda Primaria Rectangular Tecmaq
+                            </h3>
+                            <div class="text-xs text-slate-300 space-y-2">
+                                <p><strong>Frecuencia:</strong> 950 a 1150 RPM. | <strong>Ángulo tiro:</strong> 45°-60°. | <strong>Pendiente bulto:</strong> 5°-8°.</p>
+                                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1 font-mono text-[11px]">
+                                    <div class="text-sky-400 font-bold">Piso Superior (Scalping):</div>
+                                    <div>• Abertura: 2.00 mm | Hilo: 0.90-1.00 mm (AISI 304)</div>
+                                    <div class="text-sky-400 font-bold mt-2">Piso Inferior (Seguridad gruesos):</div>
+                                    <div>• Abertura: 1.20 - 1.25 mm | Hilo: 0.50-0.60 mm</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Secundaria -->
+                        <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-filter text-sky-400"></i> B. Zaranda Secundaria Rectangular Tecmaq
+                            </h3>
+                            <div class="text-xs text-slate-300 space-y-2">
+                                <p><strong>Frecuencia:</strong> 1200 a 1450 RPM. | <strong>Ángulo tiro:</strong> 45° constantes. | <strong>Pendiente:</strong> 2°-4°.</p>
+                                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1 font-mono text-[11px]">
+                                    <div class="text-sky-400 font-bold">Piso Superior: Abertura 1.00 mm (Hilo 0.40-0.45 mm)</div>
+                                    <div class="text-emerald-400 font-bold">Piso Intermedio (Corte 0.9): Abertura 0.90 mm (Hilo 0.30-0.35 mm)</div>
+                                    <div class="text-sky-400 font-bold">Piso Inferior: Abertura 0.60-0.65 mm (Hilo 0.22-0.25 mm)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 7: MAINTENANCE MICROSITE -->
+            <div id="tab-maintenance" class="tab-content space-y-6">
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="border-b border-slate-800 pb-4">
+                        <span class="text-sky-400 text-xs font-mono font-semibold uppercase tracking-wider">Micrositio Técnico de Mantenimiento</span>
+                        <h2 class="text-2xl font-bold text-white mt-1">Instructivo Interactivo de Mantenimiento y Cambio de Mallas</h2>
+                        <p class="text-xs text-slate-400 mt-1">Protocolos estrictos para intervención sin comprometer la hermeticidad ni la geometría del producto 0.9.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <div class="text-sky-400 font-bold text-sm">Módulo I: Limpieza</div>
+                            <p class="text-xs text-slate-400">
+                                Sopleteo diario con aire comprimido seco a baja presión. Inspección semanal de colmatación con peines de bronce o polímero (nunca acero).
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <div class="text-sky-400 font-bold text-sm">Módulo II: Cambio de Malla</div>
+                            <p class="text-xs text-slate-400">
+                                Desenergización LOTO, aflojamiento simétrico de pernos tensores, revisión de bancadas de goma y tensado cruzado desde el centro hacia los extremos.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <div class="text-sky-400 font-bold text-sm">Módulo III: Bastidores</div>
+                            <p class="text-xs text-slate-400">
+                                Nivelación geométrica transversal (tolerancia máx 1.5 mm). Uso de torquímetro en bulonería estructural para evitar fisuras por vibración armónica.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <!-- FOOTER -->
+        <footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+            Gravafilt 2026 • Sistema Experto de Procesamiento Granulométrico 0.9 • Todos los derechos reservados.
+        </footer>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Authentication Handler
+        function handleLogin(event) {
+            event.preventDefault();
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('login-error');
+
+            if (user === 'lsantiago' && pass === 'gravafilt2026') {
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                errorDiv.classList.add('hidden');
+            } else {
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('login-modal').classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-sky-600', 'text-white');
+                btn.classList.add('text-slate-300', 'hover:text-white', 'hover:bg-slate-800');
+            });
+
+            document.getElementById('tab-' + tabId).classList.add('active');
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-300', 'hover:text-white', 'hover:bg-slate-800');
+                activeBtn.classList.add('bg-sky-600', 'text-white');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // AI Simulator / Image Upload Logic
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview-img').src = e.target.result;
+                    document.getElementById('upload-placeholder').classList.add('hidden');
+                    document.getElementById('image-preview-container').classList.remove('hidden');
+                    document.getElementById('analyze-btn').removeAttribute('disabled');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function runAISimulation() {
+            const btn = document.getElementById('analyze-btn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Analizando con IA...';
+            btn.setAttribute('disabled', 'true');
+
+            setTimeout(() => {
+                // Simulate AI creativity case by case inspection
+                const randomD50 = (0.88 + Math.random() * 0.06).toFixed(2);
+                const randomCu = (1.06 + Math.random() * 0.07).toFixed(2);
+                const pasante = (50.0 + Math.random() * 3.0).toFixed(1);
+                const retenido = (100 - parseFloat(pasante)).toFixed(1);
+
+                document.getElementById('res-d50').innerText = randomD50 + ' mm';
+                document.getElementById('res-cu').innerText = randomCu;
+                document.getElementById('res-pasante').innerText = pasante + '%';
+                document.getElementById('res-retenido').innerText = retenido + '%';
+
+                if (parseFloat(randomCu) <= 1.12) {
+                    document.getElementById('res-diagnosis').innerText = "Análisis IA caso por caso: Material altamente homogéneo. Distribución granulométrica centrada correctamente en 0.9 mm con excelente confinamiento de finos.";
+                    document.getElementById('res-dev-sz').innerText = "+0.8% (Excelente)";
+                    document.getElementById('res-dev-sz').className = "text-emerald-400";
+                    document.getElementById('res-solution').innerText = "Ninguna corrección requerida. Mantener parámetros actuales en zaranda secundaria a 1350 RPM.";
+                } else {
+                    document.getElementById('res-diagnosis').innerText = "Análisis IA caso por caso: Leve desvío superior detectado en colas finas. Posible colmatación parcial en malla intermedia.";
+                    document.getElementById('res-dev-sz').innerText = "+2.8% (Atención)";
+                    document.getElementById('res-dev-sz').className = "text-amber-400";
+                    document.getElementById('res-solution').innerText = "Incrementar frecuencia de sopleteo con aire comprimido y verificar tensión lateral en paño de 0.90 mm.";
+                }
+
+                document.getElementById('ai-status-badge').innerText = 'Diagnóstico Completado';
+                document.getElementById('ai-status-badge').className = 'text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-mono';
+                
+                document.getElementById('ai-results-placeholder').classList.add('hidden');
+                document.getElementById('ai-results-content').classList.remove('hidden');
+
+                btn.innerHTML = '<i class="fa-solid fa-microchip"></i> Ejecutar Diagnóstico IA';
+                btn.removeAttribute('disabled');
+            }, 1200);
+        }
+
+        function triggerReset() {
+            alert('Lazo de control recalibrado exitosamente. Variables sincronizadas con sensores de planta Tecmaq.');
+        }
+    </script>
+</body>
+</html>
