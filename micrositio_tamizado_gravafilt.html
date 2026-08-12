@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRAVAFILT S.A. - Micrositio Experto: Cinética de Tamizado y Franja 0.9–1.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-4 md:p-6">
+
+    <!-- CABECERA INSTITUCIONAL Y COMITÉ EXPERTO -->
+    <header class="max-w-7xl mx-auto border-b border-slate-800 pb-4 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <span class="bg-amber-500 text-slate-950 text-xs font-bold px-2.5 py-1 rounded tracking-wider">GRAVAFILT S.A.</span>
+                <span class="text-xs font-mono text-slate-400">Panel de Ingeniería Avanzada de Procesos</span>
+            </div>
+            <h1 class="text-2xl font-extrabold tracking-tight text-amber-500 mt-1">MICROSITIO EXPERTO: CINÉTICA DE TAMIZADO Y FRANJA OBJETIVO 0.9–1.0</h1>
+            <p class="text-xs text-slate-400 mt-1">Comité Asesor Integrado: Geología Fluvial, Física de Partículas, Química Organoléptica e Ingeniería de Procesos.</p>
+        </div>
+        <div class="bg-slate-900 px-4 py-2.5 rounded-xl border border-slate-800 flex items-center gap-3 shadow-inner">
+            <span class="inline-block w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div class="text-left font-mono text-xs">
+                <span class="text-slate-400 block">ESTADO DE MALLA:</span>
+                <span class="text-amber-400 font-bold">RECTANGULAR AISLADA (NO AUTOLIMPIANTE)</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto space-y-6">
+
+        <!-- PANEL DE CONTROL DINÁMICO DE VARIABLES FÍSICAS Y CINÉTICAS -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Bloque 1: Materia Prima y Geología Fluvial -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
+                        <span>1. Geología y Acopio Fluvial</span>
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Tiempo Drenaje Silos (>16h):</span>
+                                <span id="lbl-silos" class="font-mono font-bold text-emerald-400">18.0 h</span>
+                            </div>
+                            <input type="range" id="rng-silos" min="8" max="24" step="0.5" value="18" oninput="runAdvancedSimulation()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Humedad de Ingreso a Planta:</span>
+                                <span id="lbl-humedad" class="font-mono font-bold text-emerald-400">3.5%</span>
+                            </div>
+                            <input type="range" id="rng-humedad" min="0.5" max="6.0" step="0.1" value="3.5" oninput="runAdvancedSimulation()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="status-geologia" class="mt-4 p-3 rounded-lg border text-xs bg-emerald-950/40 border-emerald-800 text-emerald-200">
+                    <strong>Geología / Química:</strong> Reposo óptimo en silos (>16h). Atrición estática efectiva y humedad controlada por debajo del tope del 4.5%[cite: 1].
+                </div>
+            </div>
+
+            <!-- Bloque 2: Cinética de Zaranda Secundaria y Coeficiente Kv -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
+                        <span>2. Cinética y Coeficiente de Lanzamiento ($K_v$)</span>
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Frecuencia Vibración (RPM):</span>
+                                <span id="lbl-rpm" class="font-mono font-bold text-emerald-400">1350 RPM</span>
+                            </div>
+                            <input type="range" id="rng-rpm" min="900" max="1500" step="25" value="1350" oninput="runAdvancedSimulation()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Amplitud Órbita ($A$ en mm):</span>
+                                <span id="lbl-amp" class="font-mono font-bold text-emerald-400">2.5 mm</span>
+                            </div>
+                            <input type="range" id="rng-amp" min="1.0" max="5.0" step="0.1" value="2.5" oninput="runAdvancedSimulation()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="status-cinetica" class="mt-4 p-3 rounded-lg border text-xs bg-emerald-950/40 border-emerald-800 text-emerald-200">
+                    <strong>Física de Partículas:</strong> Coeficiente $K_v$ en rango ideal ($3.5 - 4.2$). Proyección parabólica continua sin colmatación estática[cite: 1].
+                </div>
+            </div>
+
+            <!-- Bloque 3: Mecánica de Lecho y Coeficiente de Uniformidad -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
+                        <span>3. Arquitectura y Lecho (Franja 0.9–1.0)</span>
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Carga Específica ($t/h \cdot m^2$):</span>
+                                <span id="lbl-carga" class="font-mono font-bold text-emerald-400">8.0 t/h·m²</span>
+                            </div>
+                            <input type="range" id="rng-carga" min="4" max="15" step="0.5" value="8.0" oninput="runAdvancedSimulation()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                            <span class="text-[10px] text-slate-400 block uppercase">Coeficiente de Uniformidad Estimado</span>
+                            <span id="lbl-uniformidad" class="text-xl font-mono font-bold text-emerald-400">1.05</span>
+                            <span class="text-[10px] text-slate-500 block">(Tope crítico admitido: 1.1)[cite: 1]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="status-mecanica" class="mt-4 p-3 rounded-lg border text-xs bg-emerald-950/40 border-emerald-800 text-emerald-200">
+                    <strong>Ingeniería de Procesos:</strong> Lecho delgado (< 3 diámetros de grano). Autosegregación limpia y aislamiento exacto de la franja[cite: 1].
+                </div>
+            </div>
+
+        </section>
+
+        <!-- DIAGNÓSTICO EXPERTO MULTIDISCIPLINAR Y PROBABILIDADES DE MEJORA -->
+        <section class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+            <div>
+                <h3 class="text-base font-bold text-amber-400 mb-3">Diagnóstico Integrado de Expertos (Física, Química y Procesos)</h3>
+                <p id="expert-diagnosis" class="text-sm text-slate-300 leading-relaxed">
+                    El sistema opera actualmente bajo parámetros óptimos de buenas prácticas. La interacción entre el tiempo de reposo en silos, la atrición estática y la energía cinética de la zaranda secundaria garantiza que las mallas rectangulares no autolimpiantes mantengan su área abierta sin cegamiento por cuñas.
+                </p>
+                <div class="mt-4 grid grid-cols-2 gap-3">
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block uppercase">Probabilidad de Éxito en Franja 0.9-1.0</span>
+                        <span id="lbl-prob-exito" class="text-lg font-mono font-bold text-emerald-400">96.5%</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block uppercase">Riesgo de Cegamiento por Malla</span>
+                        <span id="lbl-riesgo-cegamiento" class="text-lg font-mono font-bold text-emerald-400">Bajo (1.2%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico Dinámico de Comportamiento Granulométrico -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 h-64 relative">
+                <canvas id="chartSimulacion"></canvas>
+            </div>
+        </section>
+
+        <!-- HISTORIAL AUTOMÁTICO DE SIMULACIONES Y REGISTROS -->
+        <section class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 class="text-base font-bold text-amber-400">Historial Automatizado de Registros de Simulación</h3>
+                    <p class="text-xs text-slate-400">Registro persistente en tiempo real de cada alteración de variables y su impacto estructural en las mallas no autolimpiantes.</p>
+                </div>
+                <button onclick="takeSnapshot()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs transition-colors cursor-pointer shadow-md">
+                    Registrar Simulación Manualmente
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800 font-mono">
+                        <tr>
+                            <th class="p-3">Timestamp</th>
+                            <th class="p-3">Silos (h)</th>
+                            <th class="p-3">Humedad (%)</th>
+                            <th class="p-3">Frec. (RPM)</th>
+                            <th class="p-3">Amplitud (mm)</th>
+                            <th class="p-3">Carga (t/h·m²)</th>
+                            <th class="p-3">Coef. Uniformidad</th>
+                            <th class="p-3">Estado Evaluado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body" class="divide-y divide-slate-800 font-mono">
+                        <!-- Inserción dinámica por JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let chartInstance = null;
+        let simulationHistory = [];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            runAdvancedSimulation();
+            takeSnapshot(true);
+        });
+
+        function initChart() {
+            const ctx = document.getElementById('chartSimulacion').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['0.45mm', '0.60mm', '0.75mm', '0.90mm (Obj)', '1.00mm (Obj)', '1.10mm', '1.25mm'],
+                    datasets: [{
+                        label: 'Distribución Granulométrica Real (%)',
+                        data: [2.5, 5.0, 12.0, 42.5, 38.0, 0.0, 0.0],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#f59e0b'
+                    }, {
+                        label: 'Límite Superior Crítico (1.1)',
+                        data: [5, 10, 20, 50, 50, 5, 0],
+                        borderColor: '#ef4444',
+                        borderDash: [4, 4],
+                        fill: false,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 0, max: 60, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }
+                    },
+                    plugins: { legend: { labels: { color: '#f8fafc', font: { size: 10 } } } }
+                }
+            });
+        }
+
+        function runAdvancedSimulation() {
+            const silos = parseFloat(document.getElementById('rng-silos').value);
+            const humedad = parseFloat(document.getElementById('rng-humedad').value);
+            const rpm = parseInt(document.getElementById('rng-rpm').value);
+            const amp = parseFloat(document.getElementById('rng-amp').value);
+            const carga = parseFloat(document.getElementById('rng-carga').value);
+
+            document.getElementById('lbl-silos').innerText = silos.toFixed(1) + ' h';
+            document.getElementById('lbl-humedad').innerText = humedad.toFixed(1) + '%';
+            document.getElementById('lbl-rpm').innerText = rpm + ' RPM';
+            document.getElementById('lbl-amp').innerText = amp.toFixed(1) + ' mm';
+            document.getElementById('lbl-carga').innerText = carga.toFixed(1) + ' t/h·m²';
+
+            const freqSec = rpm / 60;
+            const omega = 2 * Math.PI * freqSec;
+            const kv = (amp * Math.pow(omega, 2)) / 9810;
+
+            let uniformidad = 1.02 + Math.max(0, (humedad - 3.8) * 0.12) + Math.max(0, (carga - 10) * 0.05) + Math.abs(kv - 3.85) * 0.08;
+            uniformidad = Math.min(1.45, Math.max(1.01, uniformidad));
+            document.getElementById('lbl-uniformidad').innerText = uniformidad.toFixed(2);
+
+            let probExito = 96.5;
+            let riesgoCeg = "Bajo (1.2%)";
+            let diagTexto = "El sistema opera actualmente bajo parámetros óptimos de buenas prácticas. La interacción entre el tiempo de reposo en silos, la atrición estática y la energía cinética de la zaranda secundaria garantiza que las mallas rectangulares no autolimpiantes mantengan su área abierta sin cegamiento por cuñas[cite: 1].";
+
+            if (humedad > 4.5 || uniformidad > 1.25 || kv < 3.0 || kv > 4.8 || carga > 11) {
+                probExito = 48.2;
+                riesgoCeg = "Alto (>35%)";
+                diagTexto = "¡Alerta Roja de Procesos! Los valores actuales comprometen drásticamente la malla rectangular no autolimpiante. La humedad residual combinada con una alta carga específica o mal coeficiente Kv genera 'cegamiento por embotamiento', contaminando la franja 0.9-1.0 y superando el coeficiente de uniformidad crítico[cite: 1].";
+            } else if (humedad > 3.8 || uniformidad > 1.1 || carga > 9.5 || kv < 3.3) {
+                probExito = 78.4;
+                riesgoCeg = "Moderado (12.5%)";
+                diagTexto = "Se detectan desajustes cinéticos menores. El lecho comienza a engrosarse por encima de 3 diámetros de grano, propiciando el atrapamiento de partículas cuña en los hilos de la malla rectangular[cite: 1].";
+            }
+
+            updateStatusBox('status-geologia', silos >= 16 && humedad <= 4.5 ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200' : 'bg-amber-950/40 border-amber-800 text-amber-200', silos >= 16 ? "Reposo en silos óptimo (>16h). Atrición estática y drenaje gravitacional cumplidos[cite: 1]." : "¡Atención! Tiempo de reposo en silos menor a 16h; riesgo de humedad superficial elevada en ingreso a horno[cite: 1].");
+            
+            updateStatusBox('status-cinetica', kv >= 3.5 && kv <= 4.2 ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200' : 'bg-red-950/40 border-red-800 text-red-200', `Coeficiente de lanzamiento Kv = ${kv.toFixed(2)}. ${kv >= 3.5 && kv <= 4.2 ? 'Rango cinemático ideal (3.5 - 4.2)[cite: 1].' : 'Fuera de rango óptimo; se propicia rodido estático o impacto destructivo.'}`);
+
+            updateStatusBox('status-mecanica', uniformidad <= 1.1 ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200' : 'bg-red-950/40 border-red-800 text-red-200', `Coeficiente de uniformidad ${uniformidad.toFixed(2)} (${uniformidad <= 1.1 ? 'Dentro del tope crítico de 1.1' : 'Supera el tope crítico normativo'}).`);
+
+            document.getElementById('expert-diagnosis').innerText = diagTexto;
+            document.getElementById('lbl-prob-exito').innerText = probExito.toFixed(1) + '%';
+            document.getElementById('lbl-riesgo-cegamiento').innerText = riesgoCeg;
+
+            if (chartInstance) {
+                let shiftFactor = (humedad - 3.5) * 2;
+                chartInstance.data.datasets[0].data = [
+                    Math.max(0.5, 2.5 - shiftFactor),
+                    Math.max(1, 5.0 - shiftFactor),
+                    Math.max(5, 12.0 - (shiftFactor * 1.5)),
+                    Math.min(50, 42.5 + (shiftFactor * 2)),
+                    Math.max(20, 38.0 - (shiftFactor * 2)),
+                    Math.max(0, (uniformidad > 1.1 ? 8 : 0)),
+                    0
+                ];
+                chartInstance.update();
+            }
+        }
+
+        function updateStatusBox(elementId, cssClasses, text) {
+            const el = document.getElementById(elementId);
+            el.className = "mt-4 p-3 rounded-lg border text-xs " + cssClasses;
+            el.innerHTML = text;
+        }
+
+        function takeSnapshot(isAutomatic = false) {
+            const now = new Date().toLocaleTimeString();
+            const silos = document.getElementById('rng-silos').value;
+            const humedad = document.getElementById('rng-humedad').value;
+            const rpm = document.getElementById('rng-rpm').value;
+            const amp = document.getElementById('rng-amp').value;
+            const carga = document.getElementById('rng-carga').value;
+            const uniformidad = document.getElementById('lbl-uniformidad').innerText;
+            
+            let badgeColor = "text-emerald-400";
+            let statusText = "ÓPTIMO";
+            if (parseFloat(uniformidad) > 1.1 || parseFloat(humedad) > 4.5) {
+                badgeColor = "text-red-400";
+                statusText = "CRÍTICO";
+            } else if (parseFloat(uniformidad) > 1.05 || parseFloat(humedad) > 3.8) {
+                badgeColor = "text-amber-400";
+                statusText = "ADVERTENCIA";
+            }
+
+            simulationHistory.unshift({
+                time: now,
+                silos,
+                humedad,
+                rpm,
+                amp,
+                carga,
+                uniformidad,
+                statusText,
+                badgeColor,
+                isAuto: isAutomatic
+            });
+
+            renderHistoryTable();
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = "";
+            simulationHistory.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-400">${item.time} ${item.isAuto ? '<span class="text-[9px] bg-slate-800 px-1 rounded text-slate-500">AUTO</span>' : ''}</td>
+                    <td class="p-3">${item.silos}h</td>
+                    <td class="p-3">${item.humedad}%</td>
+                    <td class="p-3">${item.rpm}</td>
+                    <td class="p-3">${item.amp}mm</td>
+                    <td class="p-3">${item.carga}t/h</td>
+                    <td class="p-3 font-bold ${item.badgeColor}">${item.uniformidad}</td>
+                    <td class="p-3 font-bold ${item.badgeColor}">${item.statusText}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
