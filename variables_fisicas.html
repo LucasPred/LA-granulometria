@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRAVAFILT S.A. - Módulo de Variables Físicas y Trazabilidad (Norma IRAM 1545-1981)</title>
+    <title>GRAVAFILT S.A. - Panel Dinámico de Variables Físicas y Tamizado</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -14,213 +14,418 @@
         <div>
             <div class="flex items-center gap-3">
                 <span class="bg-amber-500 text-slate-950 text-xs font-bold px-2.5 py-1 rounded tracking-wider">GRAVAFILT S.A.</span>
-                <span class="text-xs font-mono text-slate-400">Control de Calidad y Especificaciones del Cliente</span>
+                <span class="text-xs font-mono text-slate-400">Control Dinámico de Proceso y Tamizado</span>
             </div>
-            <h1 class="text-2xl font-extrabold tracking-tight text-amber-500 mt-1">MÓDULO I: VARIABLES FÍSICAS Y MATERIA PRIMA</h1>
-            <p class="text-xs text-slate-400 mt-1">Parámetros normativos ajustados: Coeficiente de Uniformidad ampliado a tope crítico &lt; 1.5[cite: 1].</p>
+            <h1 class="text-2xl font-extrabold tracking-tight text-amber-500 mt-1">MÓDULO DINÁMICO DE VARIABLES FÍSICAS Y LÍMITES IRAM</h1>
         </div>
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-4 py-2 rounded-xl text-xs font-mono transition-all">&larr; Volver al Panel Central</a>
+        <div class="flex items-center gap-2">
+            <span id="global-alert-badge" class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-mono px-3 py-1.5 rounded-xl font-bold">ESTADO: EQUILIBRIO ÓPTIMO</span>
+            <button onclick="resetearVariables()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-mono transition-all">Restaurar Valores</button>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto space-y-6">
 
-        <!-- PANEL DE CONTROL DE PARÁMETROS CRÍTICOS -->
+        <!-- PANEL DE CONTROL DE ENTRADA DINÁMICA (ACTUALIZABLE POR EL USUARIO) -->
         <section class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
                 <div>
-                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400">Simulador y Validación de Parámetros de Entrega</h2>
-                    <p class="text-xs text-slate-400">Ajuste los valores de laboratorio para verificar el estado de homologación frente al cliente.</p>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400">Ingreso y Modificación en Tiempo Real de Variables de Planta</h2>
+                    <p class="text-xs text-slate-400">Modifique los parámetros reales recolectados en planta. El sistema evalúa al instante los topes críticos y desequilibrios según Norma IRAM[cite: 1].</p>
                 </div>
-                <span id="badge-estado-global" class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-mono px-3 py-1 rounded-lg font-bold">ESTADO: HOMOLOGADO</span>
+                <span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-mono px-2 py-1 rounded">100% DINÁMICO</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                
-                <!-- 1. HUMEDAD -->
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                    <div class="flex justify-between text-xs">
-                        <span class="text-slate-400 font-bold">Humedad</span>
-                        <span class="text-[10px] text-slate-500 font-mono">Límite: &lt; 4.00%</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Variable 1: Frecuencia de Vibración -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400 font-bold">Frecuencia Vibración</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Óptimo: 1200-1300 RPM</span>
                     </div>
                     <div class="flex justify-between items-baseline">
-                        <span id="lbl-humedad" class="text-lg font-mono font-bold text-amber-400">1.23%</span>
-                        <span id="status-humedad" class="text-[10px] text-emerald-400 font-bold">NORMAL</span>
+                        <span id="val-frec" class="text-2xl font-mono font-bold text-amber-400">1350 RPM</span>
+                        <span id="status-frec" class="text-[10px] text-amber-400 font-bold">FUERA DE RANGO[cite: 1]</span>
                     </div>
-                    <input type="range" id="rng-humedad" min="0.5" max="6.0" step="0.05" value="1.23" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <input type="range" id="rng-frec" min="1000" max="1600" step="10" value="1350" oninput="sincronizarInput('frec')" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        <input type="number" id="num-frec" value="1350" oninput="sincronizarNum('frec')" class="w-20 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-center font-mono text-amber-400">
+                    </div>
                 </div>
 
-                <!-- 2. TAMAÑO EFECTIVO (TE) -->
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                    <div class="flex justify-between text-xs">
-                        <span class="text-slate-400 font-bold">Tamaño Efec. (TE)</span>
-                        <span class="text-[10px] text-slate-500 font-mono">0.90–1.00 mm</span>
+                <!-- Variable 2: Amplitud de Órbita -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400 font-bold">Amplitud Órbita (A)</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Ref: 2.0–2.5 mm[cite: 1]</span>
                     </div>
                     <div class="flex justify-between items-baseline">
-                        <span id="lbl-te" class="text-lg font-mono font-bold text-amber-400">0.99 mm</span>
-                        <span id="status-te" class="text-[10px] text-emerald-400 font-bold">NORMAL</span>
+                        <span id="val-amp" class="text-2xl font-mono font-bold text-amber-400">2.5 mm</span>
+                        <span id="status-amp" class="text-[10px] text-emerald-400 font-bold">EN RANGO[cite: 1]</span>
                     </div>
-                    <input type="range" id="rng-te" min="0.80" max="1.10" step="0.01" value="0.99" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <input type="range" id="rng-amp" min="1.0" max="4.0" step="0.1" value="2.5" oninput="sincronizarInput('amp')" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        <input type="number" id="num-amp" value="2.5" step="0.1" oninput="sincronizarNum('amp')" class="w-20 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-center font-mono text-amber-400">
+                    </div>
                 </div>
 
-                <!-- 3. COEFICIENTE DE UNIFORMIDAD (CU) - ACTUALIZADO A 1.5 -->
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                    <div class="flex justify-between text-xs">
-                        <span class="text-slate-400 font-bold">Coef. Uniformidad</span>
-                        <span class="text-[10px] text-slate-500 font-mono">Tope Crítico: &lt; 1.5</span>
+                <!-- Variable 3: Carga Específica -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400 font-bold">Carga Específica</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Franja: 0.9–1.0[cite: 1]</span>
                     </div>
                     <div class="flex justify-between items-baseline">
-                        <span id="lbl-cu" class="text-lg font-mono font-bold text-amber-400">1.03</span>
-                        <span id="status-cu" class="text-[10px] text-emerald-400 font-bold">ÓPTIMO</span>
+                        <span id="val-carga" class="text-2xl font-mono font-bold text-amber-400">8.0 t/h·m²</span>
+                        <span id="status-carga" class="text-[10px] text-emerald-400 font-bold">FRANJA ÓPTIMA[cite: 1]</span>
                     </div>
-                    <input type="range" id="rng-cu" min="1.00" max="1.80" step="0.01" value="1.03" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <input type="range" id="rng-carga" min="4.0" max="15.0" step="0.5" value="8.0" oninput="sincronizarInput('carga')" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        <input type="number" id="num-carga" value="8.0" step="0.5" oninput="sincronizarNum('carga')" class="w-20 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-center font-mono text-amber-400">
+                    </div>
                 </div>
 
-                <!-- 4. FINOS 1 (t < 0.60 mm) -->
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                    <div class="flex justify-between text-xs">
-                        <span class="text-slate-400 font-bold">Finos 1 (&lt;0.60mm)</span>
-                        <span class="text-[10px] text-slate-500 font-mono">Límite: &lt; 1.00%</span>
+                <!-- Variable 4: Coeficiente de Uniformidad (CU) -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400 font-bold">Coef. Uniformidad (CU)</span>
+                        <span class="text-[10px] text-red-400 font-mono">Tope Crítico: 1.1[cite: 1]</span>
                     </div>
                     <div class="flex justify-between items-baseline">
-                        <span id="lbl-finos1" class="text-lg font-mono font-bold text-amber-400">0.21%</span>
-                        <span id="status-finos1" class="text-[10px] text-emerald-400 font-bold">NORMAL</span>
+                        <span id="val-cu" class="text-2xl font-mono font-bold text-amber-400">1.12</span>
+                        <span id="status-cu" class="text-[10px] text-red-500 font-bold">SUPERA TOPE[cite: 1]</span>
                     </div>
-                    <input type="range" id="rng-finos1" min="0.05" max="2.00" step="0.01" value="0.21" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                    <div class="flex items-center gap-2">
+                        <input type="range" id="rng-cu" min="0.90" max="1.50" step="0.01" value="1.12" oninput="sincronizarInput('cu')" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        <input type="number" id="num-cu" value="1.12" step="0.01" oninput="sincronizarNum('cu')" class="w-20 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-center font-mono text-amber-400">
+                    </div>
                 </div>
-
-                <!-- 5. FINOS 2 (t < 0.85 mm) -->
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                    <div class="flex justify-between text-xs">
-                        <span class="text-slate-400 font-bold">Finos 2 (&lt;0.85mm)</span>
-                        <span class="text-[10px] text-slate-500 font-mono">Límite: &lt; 3.00%</span>
-                    </div>
-                    <div class="flex justify-between items-baseline">
-                        <span id="lbl-finos2" class="text-lg font-mono font-bold text-amber-400">3.07%</span>
-                        <span id="status-finos2" class="text-[10px] text-amber-400 font-bold">ANOMALÍA</span>
-                    </div>
-                    <input type="range" id="rng-finos2" min="1.00" max="5.00" step="0.01" value="3.07" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
-                </div>
-
             </div>
         </section>
 
-        <!-- SECCIÓN DE TABLA Y GRÁFICO GRANULOMÉTRICO -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">Clasificación Granulométrica (Norma IRAM 1545-1981)[cite: 1]</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs font-mono">
-                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800">
-                            <tr>
-                                <th class="p-2.5">Tamiz IRAM Nº</th>
-                                <th class="p-2.5">Abertura (mm)</th>
-                                <th class="p-2.5">Pasa Acumulado (%)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-800 text-slate-300">
-                            <tr><td class="p-2">30</td><td class="p-2">0.60</td><td class="p-2 text-amber-400">0.21% (Finos 1)</td></tr>
-                            <tr><td class="p-2">25</td><td class="p-2">0.70</td><td class="p-2">0.68%</td></tr>
-                            <tr><td class="p-2">20</td><td class="p-2">0.85</td><td class="p-2 text-amber-400">3.07% (Finos 2)</td></tr>
-                            <tr><td class="p-2">18</td><td class="p-2">1.00</td><td class="p-2 text-emerald-400">10.32% (D10)</td></tr>
-                            <tr><td class="p-2">16</td><td class="p-2">1.18</td><td class="p-2">33.61%</td></tr>
-                            <tr><td class="p-2">14</td><td class="p-2">1.40</td><td class="p-2">68.71%</td></tr>
-                            <tr><td class="p-2">12</td><td class="p-2">1.70</td><td class="p-2 text-emerald-400">94.79% (D60)</td></tr>
-                            <tr><td class="p-2">10</td><td class="p-2">2.00</td><td class="p-2">99.85%</td></tr>
-                            <tr><td class="p-2">8</td><td class="p-2">2.36</td><td class="p-2">99.96%</td></tr>
-                        </tbody>
-                    </table>
+        <!-- RESULTADOS CALCULADOS Y SEÑALES DE ALERTA DE EQUILIBRIO -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Tarjeta de Coeficiente de Lanzamiento Kv Dinámico -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-4 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400">Cinética y Coeficiente (Kv)</h3>
+                        <span id="badge-kv-estado" class="bg-amber-950 text-amber-400 border border-amber-800 text-[10px] font-mono px-2 py-1 rounded font-bold">FUERA DE RANGO</span>
+                    </div>
+                    <div class="py-6 text-center space-y-2">
+                        <span class="text-xs text-slate-400 uppercase tracking-widest block font-bold">Valor Calculado en Vivo</span>
+                        <div id="val-kv-calc" class="text-5xl font-mono font-extrabold text-amber-400">5.09</div>
+                        <p id="desc-kv-alerta" class="text-xs text-amber-300 font-mono px-4 pt-2">
+                            Alerta: Kv elevado. Riesgo de rebote excesivo y estratificación defectuosa en el lecho filtrante[cite: 1].
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400">
+                    Fórmula aplicada en tiempo real basada en frecuencia y órbita configuradas por el usuario.
                 </div>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">Curva Granulométrica de Control</h3>
-                <div class="relative h-64 w-full">
-                    <canvas id="granulometriaChart"></canvas>
+            <!-- Matriz de Alertas Cruzadas y Desequilibrios -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-4 lg:col-span-2">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400">Matriz de Conjunción y Alertas de Desequilibrio</h3>
+                    <button onclick="guardarRegistroPlanta()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition-all">
+                        + Registrar Estado en Historial
+                    </button>
+                </div>
+                
+                <div class="space-y-3">
+                    <div id="alerta-box-1" class="p-3 bg-amber-950/40 border border-amber-800/60 rounded-xl flex items-start gap-3">
+                        <span class="text-amber-400 font-bold text-base">⚠️</span>
+                        <div>
+                            <span class="text-xs font-bold text-amber-300 font-mono block">CRUCE 1: Coeficiente de Uniformidad vs Tope Crítico[cite: 1]</span>
+                            <span id="txt-alerta-cu" class="text-xs text-slate-300">El coeficiente de uniformidad 1.12 supera el tope crítico admitido de 1.1, comprometiendo la porosidad y granulometría final[cite: 1].</span>
+                        </div>
+                    </div>
+
+                    <div id="alerta-box-2" class="p-3 bg-emerald-950/40 border border-emerald-800/60 rounded-xl flex items-start gap-3">
+                        <span class="text-emerald-400 font-bold text-base">✅</span>
+                        <div>
+                            <span class="text-xs font-bold text-emerald-300 font-mono block">CRUCE 2: Carga Específica y Dinámica de Lecho[cite: 1]</span>
+                            <span id="txt-alerta-carga" class="text-xs text-slate-300">Carga específica dentro de la franja operativa estipulada (0.9–1.0)[cite: 1].</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico interactivo vinculado a los cambios del usuario -->
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block">Visualización Interactiva de Variables de Proceso</span>
+                    <div class="relative h-44 w-full">
+                        <canvas id="dinamicoChart"></canvas>
+                    </div>
                 </div>
             </div>
+
         </div>
+
+        <!-- HISTORIAL DE CAMBIOS Y REGISTROS DINÁMICOS -->
+        <section class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-4">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <div>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400">Historial de Relevamientos de Planta (Modificables)</h2>
+                    <p class="text-xs text-slate-400">Bitácora de auditoría con los datos cargados por el operador para asegurar la granulometría solicitada.</p>
+                </div>
+                <span class="text-xs font-mono text-slate-400">Total Registros: <span id="contador-registros">1</span></span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono" id="tabla-bitacora">
+                    <thead class="bg-slate-950 text-slate-400 border-b border-slate-800">
+                        <tr>
+                            <th class="p-2.5">Hora</th>
+                            <th class="p-2.5">Frecuencia (RPM)[cite: 1]</th>
+                            <th class="p-2.5">Amplitud (A mm)[cite: 1]</th>
+                            <th class="p-2.5">Kv Calculado</th>
+                            <th class="p-2.5">Carga (t/h·m²)[cite: 1]</th>
+                            <th class="p-2.5">CU[cite: 1]</th>
+                            <th class="p-2.5">Diagnóstico / Alerta</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-slate-300">
+                        <tr>
+                            <td class="p-2">12:00:00</td>
+                            <td class="p-2 text-amber-400">1350[cite: 1]</td>
+                            <td class="p-2">2.5[cite: 1]</td>
+                            <td class="p-2 font-bold text-amber-400">5.09[cite: 1]</td>
+                            <td class="p-2">8.0[cite: 1]</td>
+                            <td class="p-2 text-red-400">1.12[cite: 1]</td>
+                            <td class="p-2 text-amber-400 font-bold">Supera tope crítico (CU 1.1)[cite: 1]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
     </main>
 
+    <!-- SCRIPT DE CONTROL DINÁMICO TOTAL -->
     <script>
-        function validarParametros() {
-            let humedad = parseFloat(document.getElementById('rng-humedad').value);
-            let te = parseFloat(document.getElementById('rng-te').value);
-            let cu = parseFloat(document.getElementById('rng-cu').value);
-            let finos1 = parseFloat(document.getElementById('rng-finos1').value);
-            let finos2 = parseFloat(document.getElementById('rng-finos2').value);
+        let dinamicoChartInstance = null;
 
-            document.getElementById('lbl-humedad').innerText = humedad.toFixed(2) + '%';
-            document.getElementById('lbl-te').innerText = te.toFixed(2) + ' mm';
-            document.getElementById('lbl-cu').innerText = cu.toFixed(2);
-            document.getElementById('lbl-finos1').innerText = finos1.toFixed(2) + '%';
-            document.getElementById('lbl-finos2').innerText = finos2.toFixed(2) + '%';
+        function sincronizarInput(tipo) {
+            let val = document.getElementById('rng-' + tipo).value;
+            document.getElementById('num-' + tipo).value = val;
+            recalcularTodo();
+        }
 
-            let criticos = 0;
+        function sincronizarNum(tipo) {
+            let val = document.getElementById('num-' + tipo).value;
+            document.getElementById('rng-' + tipo).value = val;
+            recalcularTodo();
+        }
 
-            // Humedad (< 4.00%)
-            let hEl = document.getElementById('status-humedad');
-            if(humedad >= 4.00) { hEl.innerText = "CRÍTICO"; hEl.className = "text-[10px] text-red-500 font-bold"; criticos++; }
-            else { hEl.innerText = "NORMAL"; hEl.className = "text-[10px] text-emerald-400 font-bold"; }
+        function recalcalcularTodo() {
+            let frec = parseFloat(document.getElementById('num-frec').value);
+            let amp = parseFloat(document.getElementById('num-amp').value);
+            let carga = parseFloat(document.getElementById('num-carga').value);
+            let cu = parseFloat(document.getElementById('num-cu').value);
 
-            // TE (0.90 - 1.00 mm)
-            let teEl = document.getElementById('status-te');
-            if(te < 0.90 || te > 1.00) { teEl.innerText = "FUERA DE RANGO"; teEl.className = "text-[10px] text-red-500 font-bold"; criticos++; }
-            else { teEl.innerText = "NORMAL"; teEl.className = "text-[10px] text-emerald-400 font-bold"; }
+            document.getElementById('val-frec').innerText = frec + ' RPM';
+            document.getElementById('val-amp').innerText = amp.toFixed(1) + ' mm';
+            document.getElementById('val-carga').innerText = carga.toFixed(1) + ' t/h·m²';
+            document.getElementById('val-cu').innerText = cu.toFixed(2);
 
-            // Coeficiente de Uniformidad (CU) - Actualizado a límite crítico < 1.5[cite: 1]
-            let cuEl = document.getElementById('status-cu');
-            if(cu >= 1.5) { cuEl.innerText = "CRÍTICO"; cuEl.className = "text-[10px] text-red-500 font-bold"; criticos++; }
-            else if(cu > 1.2) { cuEl.innerText = "ACEPTABLE"; cuEl.className = "text-[10px] text-amber-400 font-bold"; }
-            else { cuEl.innerText = "ÓPTIMO"; cuEl.className = "text-[10px] text-emerald-400 font-bold"; }
+            let omega = (2 * Math.PI * frec) / 60;
+            let kv = (amp * 0.001 * Math.pow(omega, 2)) / 9.81;
+            document.getElementById('val-kv-calc').innerText = kv.toFixed(2);
 
-            // Finos 1 (< 1.00%)
-            let f1El = document.getElementById('status-finos1');
-            if(finos1 >= 1.00) { f1El.innerText = "CRÍTICO"; f1El.className = "text-[10px] text-red-500 font-bold"; criticos++; }
-            else { f1El.innerText = "NORMAL"; f1El.className = "text-[10px] text-emerald-400 font-bold"; }
+            let alertasActivas = 0;
 
-            // Finos 2 (< 3.00%)
-            let f2El = document.getElementById('status-finos2');
-            if(finos2 >= 3.00) { f2El.innerText = "ANOMALÍA"; f2El.className = "text-[10px] text-amber-400 font-bold"; criticos++; }
-            else { f2El.innerText = "NORMAL"; f2El.className = "text-[10px] text-emerald-400 font-bold"; }
-
-            // Estado Global
-            let globalEl = document.getElementById('badge-estado-global');
-            if(criticos > 0) {
-                globalEl.innerText = "APROBADO BAJO ANOMALÍA";
-                globalEl.className = "bg-amber-950 text-amber-400 border border-amber-800 text-xs font-mono px-3 py-1 rounded-lg font-bold animate-pulse";
+            let statusFrec = document.getElementById('status-frec');
+            if(frec >= 1200 && frec <= 1300) {
+                statusFrec.innerText = "ÓPTIMO";
+                statusFrec.className = "text-[10px] text-emerald-400 font-bold";
             } else {
-                globalEl.innerText = "ESTADO: HOMOLOGADO";
-                globalEl.className = "bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-mono px-3 py-1 rounded-lg font-bold";
+                statusFrec.innerText = "FUERA DE RANGO[cite: 1]";
+                statusFrec.className = "text-[10px] text-amber-400 font-bold";
+                alertasActivas++;
+            }
+
+            let statusAmp = document.getElementById('status-amp');
+            if(amp >= 2.0 && amp <= 2.5) {
+                statusAmp.innerText = "EN RANGO[cite: 1]";
+                statusAmp.className = "text-[10px] text-emerald-400 font-bold";
+            } else {
+                statusAmp.innerText = "DESAJUSTADO";
+                statusAmp.className = "text-[10px] text-amber-400 font-bold";
+            }
+
+            let statusCarga = document.getElementById('status-carga');
+            if(carga >= 7.5 && carga <= 8.5) {
+                statusCarga.innerText = "FRANJA ÓPTIMA[cite: 1]";
+                statusCarga.className = "text-[10px] text-emerald-400 font-bold";
+            } else {
+                statusCarga.innerText = "VARIABLE";
+                statusCarga.className = "text-[10px] text-amber-400 font-bold";
+            }
+
+            let statusCu = document.getElementById('status-cu');
+            let boxCu = document.getElementById('alerta-box-1');
+            let txtCu = document.getElementById('txt-alerta-cu');
+            if(cu > 1.1) {
+                statusCu.innerText = "SUPERA TOPE[cite: 1]";
+                statusCu.className = "text-[10px] text-red-500 font-bold";
+                boxCu.className = "p-3 bg-amber-950/40 border border-amber-800/60 rounded-xl flex items-start gap-3";
+                txtCu.innerHTML = `El coeficiente de uniformidad <strong>${cu.toFixed(2)}</strong> supera el tope crítico admitido de 1.1[cite: 1], generando desequilibrio en la retención del tamiz.`;
+                alertasActivas++;
+            } else {
+                statusCu.innerText = "DENTRO DE TOPE[cite: 1]";
+                statusCu.className = "text-[10px] text-emerald-400 font-bold";
+                boxCu.className = "p-3 bg-emerald-950/40 border border-emerald-800/60 rounded-xl flex items-start gap-3";
+                txtCu.innerHTML = `Coeficiente de uniformidad (${cu.toFixed(2)}) en rango seguro por debajo del tope crítico de 1.1[cite: 1].`;
+            }
+
+            let globalBadge = document.getElementById('global-alert-badge');
+            let badgeKv = document.getElementById('badge-kv-estado');
+            if(kv > 4.5 && kv < 5.5) {
+                badgeKv.innerText = "EN BANDA";
+                badgeKv.className = "bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-mono px-2 py-1 rounded font-bold";
+            } else {
+                badgeKv.innerText = "FUERA DE RANGO[cite: 1]";
+                badgeKv.className = "bg-amber-950 text-amber-400 border border-amber-800 text-[10px] font-mono px-2 py-1 rounded font-bold";
+            }
+
+            if(alertasActivas > 0) {
+                globalBadge.innerText = `ESTADO: ALERTA ACTIVA (${alertasActivas} desvíos)`;
+                globalBadge.className = "bg-amber-950 text-amber-400 border border-amber-800 text-xs font-mono px-3 py-1.5 rounded-xl font-bold animate-pulse";
+            } else {
+                globalBadge.innerText = "ESTADO: EQUILIBRIO ÓPTIMO";
+                globalBadge.className = "bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-mono px-3 py-1.5 rounded-xl font-bold";
+            }
+
+            actualizarGraficoDinamico(frec, amp, carga, cu, kv);
+        }
+
+        // Alias para evitar errores de llamada
+        function recalcularTodo() { recalcalcularTodoCore(); }
+        function recalcalcularTodoCore() {
+            let frec = parseFloat(document.getElementById('num-frec').value);
+            let amp = parseFloat(document.getElementById('num-amp').value);
+            let carga = parseFloat(document.getElementById('num-carga').value);
+            let cu = parseFloat(document.getElementById('num-cu').value);
+
+            document.getElementById('val-frec').innerText = frec + ' RPM';
+            document.getElementById('val-amp').innerText = amp.toFixed(1) + ' mm';
+            document.getElementById('val-carga').innerText = carga.toFixed(1) + ' t/h·m²';
+            document.getElementById('val-cu').innerText = cu.toFixed(2);
+
+            let omega = (2 * Math.PI * frec) / 60;
+            let kv = (amp * 0.001 * Math.pow(omega, 2)) / 9.81;
+            document.getElementById('val-kv-calc').innerText = kv.toFixed(2);
+
+            let alertasActivas = 0;
+            let statusFrec = document.getElementById('status-frec');
+            if(frec >= 1200 && frec <= 1300) {
+                statusFrec.innerText = "ÓPTIMO";
+                statusFrec.className = "text-[10px] text-emerald-400 font-bold";
+            } else {
+                statusFrec.innerText = "FUERA DE RANGO[cite: 1]";
+                statusFrec.className = "text-[10px] text-amber-400 font-bold";
+                alertasActivas++;
+            }
+
+            let statusCu = document.getElementById('status-cu');
+            let boxCu = document.getElementById('alerta-box-1');
+            let txtCu = document.getElementById('txt-alerta-cu');
+            if(cu > 1.1) {
+                statusCu.innerText = "SUPERA TOPE[cite: 1]";
+                statusCu.className = "text-[10px] text-red-500 font-bold";
+                boxCu.className = "p-3 bg-amber-950/40 border border-amber-800/60 rounded-xl flex items-start gap-3";
+                txtCu.innerHTML = `El coeficiente de uniformidad <strong>${cu.toFixed(2)}</strong> supera el tope crítico admitido de 1.1[cite: 1].`;
+                alertasActivas++;
+            } else {
+                statusCu.innerText = "DENTRO DE TOPE[cite: 1]";
+                statusCu.className = "text-[10px] text-emerald-400 font-bold";
+                boxCu.className = "p-3 bg-emerald-950/40 border border-emerald-800/60 rounded-xl flex items-start gap-3";
+                txtCu.innerHTML = `Coeficiente de uniformidad (${cu.toFixed(2)}) en rango seguro por debajo del tope crítico de 1.1[cite: 1].`;
+            }
+
+            let globalBadge = document.getElementById('global-alert-badge');
+            if(alertasActivas > 0) {
+                globalBadge.innerText = `ESTADO: ALERTA ACTIVA (${alertasActivas} desvíos)`;
+                globalBadge.className = "bg-amber-950 text-amber-400 border border-amber-800 text-xs font-mono px-3 py-1.5 rounded-xl font-bold animate-pulse";
+            } else {
+                globalBadge.innerText = "ESTADO: EQUILIBRIO ÓPTIMO";
+                globalBadge.className = "bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-mono px-3 py-1.5 rounded-xl font-bold";
+            }
+
+            actualizarGraficoDinamico(frec, amp, carga, cu, kv);
+        }
+
+        function resetearVariables() {
+            document.getElementById('rng-frec').value = 1350;
+            document.getElementById('num-frec').value = 1350;
+            document.getElementById('rng-amp').value = 2.5;
+            document.getElementById('num-amp').value = 2.5;
+            document.getElementById('rng-carga').value = 8.0;
+            document.getElementById('num-carga').value = 8.0;
+            document.getElementById('rng-cu').value = 1.12;
+            document.getElementById('num-cu').value = 1.12;
+            recalcalcularTodoCore();
+        }
+
+        function guardarRegistroPlanta() {
+            let ahora = new Date().toLocaleTimeString();
+            let frec = document.getElementById('num-frec').value;
+            let amp = document.getElementById('num-amp').value;
+            let kv = document.getElementById('val-kv-calc').innerText;
+            let carga = document.getElementById('num-carga').value;
+            let cu = document.getElementById('num-cu').value;
+            let diag = parseFloat(cu) > 1.1 ? "Supera tope crítico (CU 1.1)[cite: 1]" : "Homologado en equilibrio[cite: 1]";
+
+            let tbody = document.querySelector('#tabla-bitacora tbody');
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="p-2 text-slate-400">${ahora}</td>
+                <td class="p-2 text-amber-400">${frec}[cite: 1]</td>
+                <td class="p-2">${amp}[cite: 1]</td>
+                <td class="p-2 font-bold text-amber-400">${kv}[cite: 1]</td>
+                <td class="p-2">${carga}[cite: 1]</td>
+                <td class="p-2 text-red-400">${cu}[cite: 1]</td>
+                <td class="p-2 text-amber-400 font-bold">${diag}</td>
+            `;
+            tbody.prepend(row);
+            document.getElementById('contador-registros').innerText = tbody.querySelectorAll('tr').length;
+            alert("Nuevo estado dinámico registrado en el historial de planta.");
+        }
+
+        function actualizarGraficoDinamico(frec, amp, carga, cu, kv) {
+            if(dinamicoChartInstance) {
+                dinamicoChartInstance.data.datasets[0].data = [frec / 100, amp * 20, carga * 10, cu * 50, kv * 10];
+                dinamicoChartInstance.update();
             }
         }
 
-        const ctx = document.getElementById('granulometriaChart').getContext('2d');
-        const granulometriaChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['0.1', '0.6', '0.7', '0.85', '1.0', '1.18', '1.4', '1.7', '2.0', '2.36', '10.0'],
-                datasets: [{
-                    label: 'Pasa Acumulado (%)[cite: 1]',
-                    data: [0, 0.21, 0.68, 3.07, 10.32, 33.61, 68.71, 94.79, 99.85, 99.96, 100],
-                    borderColor: '#f59e0b',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                    fill: true,
-                    tension: 0.2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-                    y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' }, max: 100, min: 0 }
+        window.onload = function() {
+            const ctx = document.getElementById('dinamicoChart').getContext('2d');
+            dinamicoChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Frecuencia (/100)', 'Amplitud (x20)', 'Carga (x10)', 'CU (x50)', 'Kv (x10)'],
+                    datasets: [{
+                        label: 'Parámetros Dinámicos Actuales',
+                        data: [13.5, 50, 80, 56, 50.9],
+                        backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#8b5cf6']
+                    }]
                 },
-                plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } }
-            }
-        });
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                        y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+            recalcalcularTodoCore();
+        }
     </script>
 </body>
 </html>
