@@ -3,211 +3,453 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRAVAFILT S.A. - Sistema Integrado de Modulación y Control</title>
+    <title>GRAVAFILT S.A. - Plataforma Integral: Secado, Modulación y Cinética de Tamizado</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-4 md:p-6">
 
-    <!-- PANTALLA DE ACCESO - DOBLE CAPA DE SEGURIDAD -->
-    <div id="auth-screen" class="fixed inset-0 bg-slate-950 flex items-center justify-center z-50 p-4">
-        <div class="bg-slate-800 border border-slate-700 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center">
-            <h2 class="text-2xl font-bold text-amber-500 mb-2">GRAVAFILT S.A.</h2>
-            <p class="text-sm text-slate-400 mb-6">Sistema de Acceso Restringido - Doble Capa de Seguridad</p>
-            <div class="mb-4 text-left">
-                <label class="block text-xs font-semibold text-slate-300 mb-1 uppercase tracking-wider">Usuario Autorizado</label>
-                <input type="text" id="auth-user" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-100 focus:outline-none focus:border-amber-500" placeholder="Ej. lsantiago">
+    <!-- CABECERA INSTITUCIONAL Y COMITÉ EXPERTO -->
+    <header class="max-w-7xl mx-auto border-b border-slate-800 pb-4 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <span class="bg-amber-500 text-slate-950 text-xs font-bold px-2.5 py-1 rounded tracking-wider">GRAVAFILT S.A.</span>
+                <span class="text-xs font-mono text-slate-400">Plataforma Centralizada de Ingeniería de Procesos</span>
             </div>
-            <div class="mb-6 text-left">
-                <label class="block text-xs font-semibold text-slate-300 mb-1 uppercase tracking-wider">Contraseña de Seguridad</label>
-                <input type="password" id="auth-pass" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-100 focus:outline-none focus:border-amber-500" placeholder="••••••••••••">
-            </div>
-            <button onclick="validateLogin()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold p-3 rounded-lg transition-colors cursor-pointer">
-                Ingresar al Sistema
-            </button>
-            <p id="auth-error" class="text-red-400 text-xs mt-4 hidden">Credenciales inválidas. Acceso denegado (lsantiago / gravafilt2026).</p>
+            <h1 class="text-2xl font-extrabold tracking-tight text-amber-500 mt-1">SISTEMA INTEGRAL: SECADO, MODULACIÓN Y TAMIZADO (FRANJA 0.9–1.0)</h1>
+            <p class="text-xs text-slate-400 mt-1">Interconexión Activa: Control de Modulación de Arenas Especiales y Cinética de Zaranda[cite: 1].</p>
         </div>
-    </div>
-
-    <!-- APLICACION PRINCIPAL -->
-    <div id="app-container" class="hidden p-6 max-w-7xl mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center border-b border-slate-800 pb-4 mb-6 gap-4">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tight text-amber-500">SISTEMA DE MODULACIÓN DE ARENAS ESPECIALES</h1>
-                <p class="text-sm text-slate-400">Operador activo: <span id="lbl-user" class="text-amber-400 font-mono"></span> | Límite Crítico: 3.8% Humedad</p>
-            </div>
-            <div class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 flex items-center gap-2">
-                <span class="inline-block w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
-                <span class="text-xs font-mono">STATUS: ONLINE (PRODUCCIÓN)</span>
-            </div>
-        </header>
-
-        <!-- ALARMA CRITICA -->
-        <div id="alarm-box" class="hidden mb-6 p-4 bg-red-950 border border-red-500 text-red-200 rounded-xl flex items-center gap-3 animate-pulse">
-            <div>
-                <h3 class="font-bold text-lg">PROCESO DETENIDO: ALARMA CRÍTICA DE HUMEDAD</h3>
-                <p class="text-sm" id="alarm-msg">La humedad inicial supera el tope normativo del 3.8%.</p>
+        <div class="bg-slate-900 px-4 py-2.5 rounded-xl border border-slate-800 flex items-center gap-3 shadow-inner">
+            <span class="inline-block w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div class="text-left font-mono text-xs">
+                <span class="text-slate-400 block">ESTADO DE RED:</span>
+                <span class="text-amber-400 font-bold">MÓDULOS INTERCONECTADOS</span>
             </div>
         </div>
+    </header>
 
-        <!-- GRID PRINCIPAL -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <!-- Ingreso de Materia Prima -->
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
-                <h2 class="text-lg font-semibold mb-4 text-amber-400">Ingreso de Arena Gruesa</h2>
-                
-                <div class="mb-6">
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-slate-300">Humedad Inicial</span>
-                        <span id="val-humedad" class="font-mono font-bold text-green-400">2.5%</span>
+    <main class="max-w-7xl mx-auto space-y-6">
+
+        <!-- SECCIÓN 0: PANEL PRINCIPAL DE SECADO Y MODULACIÓN DE ARENAS ESPECIALES -->
+        <section class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
+                        <span>Módulo Principal: Secado Térmico y Modulación de Arenas Especiales</span>
+                    </h2>
+                    <p class="text-xs text-slate-400">Control de temperatura, rotación del horno y proporciones de mezcla para alimentación del tamiz[cite: 1].</p>
+                </div>
+                <span class="bg-slate-950 text-amber-400 border border-slate-800 text-xs font-mono px-3 py-1 rounded-lg">Estado: Sincronizado</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Control Horno Rotativo -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <h3 class="text-xs font-bold text-slate-300 uppercase">Horno Rotativo (Secado)</h3>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">Temperatura Descarga:</span>
+                            <span id="lbl-temp-horno" class="font-mono font-bold text-amber-400">200°C</span>
+                        </div>
+                        <input type="range" id="rng-temp-horno" min="150" max="250" step="5" value="200" oninput="syncModulationSystem()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
                     </div>
-                    <input type="range" id="input-humedad" min="0" max="6" step="0.1" value="2.5" oninput="updateProcess()" class="w-full accent-amber-500 bg-slate-700 h-2 rounded-lg cursor-pointer">
-                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
-                        <span>0% Min</span>
-                        <span class="text-red-400 font-bold">Tope: 3.8%</span>
-                        <span>6% Max</span>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">RPM Tambor:</span>
+                            <span id="lbl-rpm-horno" class="font-mono font-bold text-amber-400">4.2 RPM</span>
+                        </div>
+                        <input type="range" id="rng-rpm-horno" min="3.0" max="6.0" step="0.1" value="4.2" oninput="syncModulationSystem()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-slate-300">Flujo de Alimentación</span>
-                        <span id="val-flujo" class="font-mono font-bold text-amber-400">50 Ton/h</span>
+                <!-- Modulación de Arenas Especiales -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <h3 class="text-xs font-bold text-slate-300 uppercase">Proporción de Modulación de Ingreso</h3>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">Fracción Gruesa (>1.0mm):</span>
+                            <span id="lbl-mod-gruesa" class="font-mono font-bold text-amber-400">35%</span>
+                        </div>
+                        <input type="range" id="rng-mod-gruesa" min="10" max="60" step="1" value="35" oninput="syncModulationSystem()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
                     </div>
-                    <input type="range" id="input-flujo" min="10" max="100" step="5" value="50" oninput="updateProcess()" class="w-full accent-amber-500 bg-slate-700 h-2 rounded-lg cursor-pointer">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">Fracción Fina (<0.9mm):</span>
+                            <span id="lbl-mod-fina" class="font-mono font-bold text-amber-400">22%</span>
+                        </div>
+                        <input type="range" id="rng-mod-fina" min="5" max="40" step="1" value="22" oninput="syncModulationSystem()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Estado del Blend Modulado -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <h3 class="text-xs font-bold text-slate-300 uppercase">Índice de Blend Modulado</h3>
+                    <div class="text-center my-auto">
+                        <span class="text-[10px] text-slate-400 block uppercase">Estabilidad de Mezcla Especial</span>
+                        <span id="lbl-estado-blend" class="text-lg font-mono font-bold text-emerald-400">ÓPTIMO PARA TAMIZ</span>
+                    </div>
+                    <div id="status-modulacion-box" class="p-2 rounded bg-emerald-950/40 border border-emerald-800 text-[10px] text-emerald-200 text-center">
+                        Blend balanceado para aislamiento exacto de franja 0.9–1.0[cite: 1].
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 1, 2 y 3: PANEL DE CONTROL DINÁMICO DE ZARANDA Y CINÉTICA -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Bloque 1: Materia Prima y Geología Fluvial -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
+                        <span>1. Geología y Acopio Fluvial</span>
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Tiempo Drenaje Silos (>16h)[cite: 1]:</span>
+                                <span id="lbl-silos" class="font-mono font-bold text-emerald-400">18.0 h</span>
+                            </div>
+                            <input type="range" id="rng-silos" min="8" max="24" step="0.5" value="18" oninput="runAdvancedSimulation()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Humedad de Ingreso a Planta[cite: 1]:</span>
+                                <span id="lbl-humedad" class="font-mono font-bold text-emerald-400">3.5%</span>
+                            </div>
+                            <input type="range" id="rng-humedad" min="0.5" max="6.0" step="0.1" value="3.5" oninput="runAdvancedSimulation()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="status-geologia" class="mt-4 p-3 rounded-lg border text-xs bg-emerald-950/40 border-emerald-800 text-emerald-200">
+                    <strong>Geología / Química:</strong> Reposo óptimo en silos (>16h). Atrición estática efectiva y humedad controlada por debajo del tope del 4.5%[cite: 1].
                 </div>
             </div>
 
-            <!-- Secado Rotativo -->
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl relative overflow-hidden">
-                <div id="status-bar-secador" class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-                <h2 class="text-lg font-semibold mb-4 text-amber-400">Fase 1: Secado Rotativo</h2>
-                <div class="grid grid-cols-2 gap-4 mt-2">
-                    <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700 text-center">
-                        <span class="text-xs text-slate-400 block mb-1">Temp. Modulada</span>
-                        <span id="val-temp" class="text-2xl font-mono font-bold text-slate-100">135°C</span>
-                    </div>
-                    <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700 text-center">
-                        <span class="text-xs text-slate-400 block mb-1">Quemador</span>
-                        <span id="val-quemador" class="text-sm font-bold text-green-400">MODULANDO</span>
+            <!-- Bloque 2: Cinética de Zaranda Secundaria y Coeficiente Kv -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
+                        <span>2. Cinética y Coeficiente de Lanzamiento ($K_v$)</span>
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Frecuencia Vibración (RPM)[cite: 1]:</span>
+                                <span id="lbl-rpm" class="font-mono font-bold text-emerald-400">1350 RPM</span>
+                            </div>
+                            <input type="range" id="rng-rpm" min="900" max="1500" step="25" value="1350" oninput="runAdvancedSimulation()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Amplitud Órbita ($A$ en mm)[cite: 1]:</span>
+                                <span id="lbl-amp" class="font-mono font-bold text-emerald-400">2.5 mm</span>
+                            </div>
+                            <input type="range" id="rng-amp" min="1.0" max="5.0" step="0.1" value="2.5" oninput="runAdvancedSimulation()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        </div>
                     </div>
                 </div>
-                <p class="text-xs text-slate-400 mt-6 bg-slate-900/30 p-3 rounded border border-slate-700/50">
-                    Control térmico reactivo para garantizar humedad remanente inferior al 0.1% antes del tamizado.
+
+                <div id="status-cinetica" class="mt-4 p-3 rounded-lg border text-xs bg-emerald-950/40 border-emerald-800 text-emerald-200">
+                    <strong>Física de Partículas:</strong> Coeficiente $K_v$ en rango ideal ($3.5 - 4.2$). Proyección parabólica continua sin colmatación estática[cite: 1].
+                </div>
+            </div>
+
+            <!-- Bloque 3: Mecánica de Lecho y Coeficiente de Uniformidad -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
+                        <span>3. Arquitectura y Lecho (Franja 0.9–1.0)</span>
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Carga Específica ($t/h \cdot m^2$)[cite: 1]:</span>
+                                <span id="lbl-carga" class="font-mono font-bold text-emerald-400">8.0 t/h·m²</span>
+                            </div>
+                            <input type="range" id="rng-carga" min="4" max="15" step="0.5" value="8.0" oninput="runAdvancedSimulation()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                            <span class="text-[10px] text-slate-400 block uppercase">Coeficiente de Uniformidad Estimado</span>
+                            <span id="lbl-uniformidad" class="text-xl font-mono font-bold text-emerald-400">1.05</span>
+                            <span class="text-[10px] text-slate-500 block">(Tope crítico admitido: 1.1)[cite: 1]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="status-mecanica" class="mt-4 p-3 rounded-lg border text-xs bg-emerald-950/40 border-emerald-800 text-emerald-200">
+                    <strong>Ingeniería de Procesos:</strong> Lecho delgado (< 3 diámetros de grano). Autosegregación limpia y aislamiento exacto de la franja[cite: 1].
+                </div>
+            </div>
+
+        </section>
+
+        <!-- DIAGNÓSTICO EXPERTO MULTIDISCIPLINAR Y PROBABILIDADES DE MEJORA -->
+        <section class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+            <div>
+                <h3 class="text-base font-bold text-amber-400 mb-3">Diagnóstico Integrado (Modulación, Secado y Tamizado)</h3>
+                <p id="expert-diagnosis" class="text-sm text-slate-300 leading-relaxed">
+                    El sistema integrado opera bajo parámetros óptimos. La modulación de arenas especiales combinada con el secado térmico y la energía cinética de la zaranda secundaria garantiza que las mallas rectangulares no autolimpiantes mantengan su área abierta sin cegamiento por cuñas[cite: 1].
                 </p>
-            </div>
-
-            <!-- Tamizado Clasificador -->
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
-                <h2 class="text-lg font-semibold mb-4 text-amber-400">Fase 2: Tamizado Clasificador</h2>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg border border-slate-700">
-                        <span class="text-sm text-slate-300">Frecuencia Vibración</span>
-                        <span id="val-freq" class="font-mono font-bold text-amber-400">45 Hz</span>
+                <div class="mt-4 grid grid-cols-2 gap-3">
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block uppercase">Probabilidad de Éxito en Franja 0.9-1.0</span>
+                        <span id="lbl-prob-exito" class="text-lg font-mono font-bold text-emerald-400">96.5%</span>
                     </div>
-                    <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg border border-slate-700">
-                        <span class="text-sm text-slate-300">Eficiencia de Separación</span>
-                        <span id="val-eficiencia" class="font-mono font-bold text-green-400">94%</span>
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block uppercase">Riesgo de Cegamiento por Malla</span>
+                        <span id="lbl-riesgo-cegamiento" class="text-lg font-mono font-bold text-emerald-400">Bajo (1.2%)</span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- GRAFICO HISTORICO -->
-        <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
-            <h2 class="text-lg font-semibold mb-4 text-amber-400">Historial en Tiempo Real de Humedad vs Límite Crítico (3.8%)</h2>
-            <div class="h-64 w-full">
-                <canvas id="chartHumedad"></canvas>
+            <!-- Gráfico Dinámico de Comportamiento Granulométrico -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 h-64 relative">
+                <canvas id="chartSimulacion"></canvas>
             </div>
-        </div>
-    </div>
+        </section>
+
+        <!-- HISTORIAL AUTOMÁTICO DE SIMULACIONES Y REGISTROS -->
+        <section class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 class="text-base font-bold text-amber-400">Historial Automatizado de Registros Integrados</h3>
+                    <p class="text-xs text-slate-400">Registro persistente en tiempo real de modulación, secado y su impacto en las mallas no autolimpiantes.</p>
+                </div>
+                <button onclick="takeSnapshot()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs transition-colors cursor-pointer shadow-md">
+                    Registrar Simulación Manualmente
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800 font-mono">
+                        <tr>
+                            <th class="p-3">Timestamp</th>
+                            <th class="p-3">Temp. Horno</th>
+                            <th class="p-3">Mod. Gruesa/Fina</th>
+                            <th class="p-3">Silos/Hum.</th>
+                            <th class="p-3">Frec./Amp.</th>
+                            <th class="p-3">Carga</th>
+                            <th class="p-3">Coef. Uniformidad</th>
+                            <th class="p-3">Estado Sistema</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body" class="divide-y divide-slate-800 font-mono">
+                        <!-- Inserción dinámica por JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
 
     <script>
         let chartInstance = null;
+        let simulationHistory = [];
 
-        function validateLogin() {
-            const user = document.getElementById('auth-user').value.trim();
-            const pass = document.getElementById('auth-pass').value.trim();
-            const err = document.getElementById('auth-error');
-
-            if (user === 'lsantiago' && pass === 'gravafilt2026') {
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('app-container').classList.remove('hidden');
-                document.getElementById('lbl-user').innerText = user;
-                initChart();
-            } else {
-                err.classList.remove('hidden');
-            }
-        }
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            syncModulationSystem();
+            takeSnapshot(true);
+        });
 
         function initChart() {
-            const ctx = document.getElementById('chartHumedad').getContext('2d');
+            const ctx = document.getElementById('chartSimulacion').getContext('2d');
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['14:00', '14:15', '14:30', '14:45', '15:00'],
+                    labels: ['0.45mm', '0.60mm', '0.75mm', '0.90mm (Obj)', '1.00mm (Obj)', '1.10mm', '1.25mm'],
                     datasets: [{
-                        label: 'Humedad de Entrada (%)',
-                        data: [2.1, 2.5, 2.8, 2.4, 2.5],
+                        label: 'Distribución Granulométrica Modulada (%)',
+                        data: [2.5, 5.0, 12.0, 42.5, 38.0, 0.0, 0.0],
                         borderColor: '#f59e0b',
                         backgroundColor: 'rgba(245, 158, 11, 0.1)',
                         fill: true,
-                        tension: 0.3
+                        tension: 0.3,
+                        pointBackgroundColor: '#f59e0b'
                     }, {
-                        label: 'Límite Máximo (3.8%)',
-                        data: [3.8, 3.8, 3.8, 3.8, 3.8],
-                        borderColor: '#dc2626',
-                        borderDash: [5, 5],
-                        fill: false
+                        label: 'Límite Superior Crítico (1.1)',
+                        data: [5, 10, 20, 50, 50, 5, 0],
+                        borderColor: '#ef4444',
+                        borderDash: [4, 4],
+                        fill: false,
+                        pointRadius: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: { min: 0, max: 6, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
-                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+                        y: { min: 0, max: 60, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }
                     },
-                    plugins: { legend: { labels: { color: '#f8fafc' } } }
+                    plugins: { legend: { labels: { color: '#f8fafc', font: { size: 10 } } } }
                 }
             });
         }
 
-        function updateProcess() {
-            const humedad = parseFloat(document.getElementById('input-humedad').value);
-            const flujo = parseInt(document.getElementById('input-flujo').value);
-            
-            document.getElementById('val-humedad').innerText = humedad.toFixed(1) + '%';
-            document.getElementById('val-flujo').innerText = flujo + ' Ton/h';
+        function syncModulationSystem() {
+            const tempHorno = parseFloat(document.getElementById('rng-temp-horno').value);
+            const rpmHorno = parseFloat(document.getElementById('rng-rpm-horno').value);
+            const modGruesa = parseFloat(document.getElementById('rng-mod-gruesa').value);
+            const modFina = parseFloat(document.getElementById('rng-mod-fina').value);
 
-            const alarmBox = document.getElementById('alarm-box');
-            const statusBar = document.getElementById('status-bar-secador');
-            const valTemp = document.getElementById('val-temp');
-            const valQuemador = document.getElementById('val-quemador');
-            const valFreq = document.getElementById('val-freq');
-            const valEficiencia = document.getElementById('val-eficiencia');
+            document.getElementById('lbl-temp-horno').innerText = tempHorno + '°C';
+            document.getElementById('lbl-rpm-horno').innerText = rpmHorno.toFixed(1) + ' RPM';
+            document.getElementById('lbl-mod-gruesa').innerText = modGruesa + '%';
+            document.getElementById('lbl-mod-fina').innerText = modFina + '%';
 
-            if (humedad > 3.8) {
-                alarmBox.classList.remove('hidden');
-                statusBar.className = 'absolute top-0 left-0 w-1 h-full bg-red-500';
-                valTemp.innerText = '0°C';
-                valQuemador.innerText = 'APAGADO (INTERLOCK)';
-                valQuemador.className = 'text-sm font-bold text-red-400';
-                valFreq.innerText = '0 Hz';
-                valEficiencia.innerText = '0%';
-                document.getElementById('val-humedad').className = 'font-mono font-bold text-red-400';
+            // Evaluar balance de modulación
+            let sumaMod = modGruesa + modFina;
+            let estadoBlendEl = document.getElementById('lbl-estado-blend');
+            let statusModBox = document.getElementById('status-modulacion-box');
+
+            if (sumaMod > 75 || sumaMod < 40) {
+                estadoBlendEl.innerText = "DESBALANCE DE MODULACIÓN";
+                estadoBlendEl.className = "text-lg font-mono font-bold text-red-400";
+                statusModBox.className = "p-2 rounded bg-red-950/40 border border-red-800 text-[10px] text-red-200 text-center";
+                statusModBox.innerText = "Advertencia: Proporciones fuera de rango óptimo para alimentación del tamiz[cite: 1].";
             } else {
-                alarmBox.classList.add('hidden');
-                statusBar.className = 'absolute top-0 left-0 w-1 h-full bg-green-500';
-                const tempCalc = Math.min(160, Math.round(100 + (humedad * 15)));
-                const freqCalc = Math.min(60, Math.round(35 + (flujo * 0.2)));
-                valTemp.innerText = tempCalc + '°C';
-                valQuemador.innerText = 'MODULANDO';
-                valQuemador.className = 'text-sm font-bold text-green-400';
-                valFreq.innerText = freqCalc + ' Hz';
-                valEficiencia.innerText = '94%';
-                document.getElementById('val-humedad').className = 'font-mono font-bold text-green-400';
+                estadoBlendEl.innerText = "ÓPTIMO PARA TAMIZ";
+                estadoBlendEl.className = "text-lg font-mono font-bold text-emerald-400";
+                statusModBox.className = "p-2 rounded bg-emerald-950/40 border border-emerald-800 text-[10px] text-emerald-200 text-center";
+                statusModBox.innerText = "Blend balanceado para aislamiento exacto de franja 0.9–1.0[cite: 1].";
             }
+
+            runAdvancedSimulation();
+        }
+
+        function runAdvancedSimulation() {
+            const silos = parseFloat(document.getElementById('rng-silos').value);
+            const humedad = parseFloat(document.getElementById('rng-humedad').value);
+            const rpm = parseInt(document.getElementById('rng-rpm').value);
+            const amp = parseFloat(document.getElementById('rng-amp').value);
+            const carga = parseFloat(document.getElementById('rng-carga').value);
+            const modGruesa = parseFloat(document.getElementById('rng-mod-gruesa').value);
+
+            document.getElementById('lbl-silos').innerText = silos.toFixed(1) + ' h';
+            document.getElementById('lbl-humedad').innerText = humedad.toFixed(1) + '%';
+            document.getElementById('lbl-rpm').innerText = rpm + ' RPM';
+            document.getElementById('lbl-amp').innerText = amp.toFixed(1) + ' mm';
+            document.getElementById('lbl-carga').innerText = carga.toFixed(1) + ' t/h·m²';
+
+            const freqSec = rpm / 60;
+            const omega = 2 * Math.PI * freqSec;
+            const kv = (amp * Math.pow(omega, 2)) / 9810;
+
+            let uniformidad = 1.02 + Math.max(0, (humedad - 3.8) * 0.12) + Math.max(0, (carga - 10) * 0.05) + Math.abs(kv - 3.85) * 0.08 + Math.abs(modGruesa - 35) * 0.003;
+            uniformidad = Math.min(1.45, Math.max(1.01, uniformidad));
+            document.getElementById('lbl-uniformidad').innerText = uniformidad.toFixed(2);
+
+            let probExito = 96.5;
+            let riesgoCeg = "Bajo (1.2%)";
+            let diagTexto = "Sistema integrado operando en óptimas condiciones. El acoplamiento entre el secado, la modulación de arenas especiales y la cinética de zaranda evita el cegamiento de las mallas rectangulares no autolimpiantes[cite: 1].";
+
+            if (humedad > 4.5 || uniformidad > 1.25 || kv < 3.0 || kv > 4.8 || carga > 11) {
+                probExito = 48.2;
+                riesgoCeg = "Alto (>35%)";
+                diagTexto = "¡Alerta Crítica en Sistema Integrado! Los desajustes térmicos o de modulación comprometen la malla rectangular no autolimpiante, generando cegamiento por embotamiento[cite: 1].";
+            } else if (humedad > 3.8 || uniformidad > 1.1 || carga > 9.5 || kv < 3.3) {
+                probExito = 78.4;
+                riesgoCeg = "Moderado (12.5%)";
+                diagTexto = "Se detectan desajustes menores en la modulación o vibración que propician atrapamiento de partículas cuña[cite: 1].";
+            }
+
+            updateStatusBox('status-geologia', silos >= 16 && humedad <= 4.5 ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200' : 'bg-amber-950/40 border-amber-800 text-amber-200', silos >= 16 ? "Reposo en silos óptimo (>16h). Atrición estática y drenaje gravitacional cumplidos[cite: 1]." : "¡Atención! Tiempo de reposo en silos menor a 16h[cite: 1].");
+            
+            updateStatusBox('status-cinetica', kv >= 3.5 && kv <= 4.2 ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200' : 'bg-red-950/40 border-red-800 text-red-200', `Coeficiente de lanzamiento Kv = ${kv.toFixed(2)}. ${kv >= 3.5 && kv <= 4.2 ? 'Rango cinemático ideal (3.5 - 4.2)[cite: 1].' : 'Fuera de rango óptimo.'}`);
+
+            updateStatusBox('status-mecanica', uniformidad <= 1.1 ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200' : 'bg-red-950/40 border-red-800 text-red-200', `Coeficiente de uniformidad ${uniformidad.toFixed(2)} (${uniformidad <= 1.1 ? 'Dentro del tope crítico de 1.1' : 'Supera el tope crítico'}).`);
+
+            document.getElementById('expert-diagnosis').innerText = diagTexto;
+            document.getElementById('lbl-prob-exito').innerText = probExito.toFixed(1) + '%';
+            document.getElementById('lbl-riesgo-cegamiento').innerText = riesgoCeg;
+
+            if (chartInstance) {
+                let shiftFactor = (humedad - 3.5) * 2;
+                chartInstance.data.datasets[0].data = [
+                    Math.max(0.5, 2.5 - shiftFactor),
+                    Math.max(1, 5.0 - shiftFactor),
+                    Math.max(5, 12.0 - (shiftFactor * 1.5)),
+                    Math.min(50, 42.5 + (shiftFactor * 2)),
+                    Math.max(20, 38.0 - (shiftFactor * 2)),
+                    Math.max(0, (uniformidad > 1.1 ? 8 : 0)),
+                    0
+                ];
+                chartInstance.update();
+            }
+        }
+
+        function updateStatusBox(elementId, cssClasses, text) {
+            const el = document.getElementById(elementId);
+            el.className = "mt-4 p-3 rounded-lg border text-xs " + cssClasses;
+            el.innerHTML = text;
+        }
+
+        function takeSnapshot(isAutomatic = false) {
+            const now = new Date().toLocaleTimeString();
+            const tempHorno = document.getElementById('rng-temp-horno').value;
+            const modG = document.getElementById('rng-mod-gruesa').value;
+            const modF = document.getElementById('rng-mod-fina').value;
+            const silos = document.getElementById('rng-silos').value;
+            const humedad = document.getElementById('rng-humedad').value;
+            const rpm = document.getElementById('rng-rpm').value;
+            const amp = document.getElementById('rng-amp').value;
+            const carga = document.getElementById('rng-carga').value;
+            const uniformidad = document.getElementById('lbl-uniformidad').innerText;
+            
+            let badgeColor = "text-emerald-400";
+            let statusText = "ÓPTIMO";
+            if (parseFloat(uniformidad) > 1.1 || parseFloat(humedad) > 4.5) {
+                badgeColor = "text-red-400";
+                statusText = "CRÍTICO";
+            } else if (parseFloat(uniformidad) > 1.05 || parseFloat(humedad) > 3.8) {
+                badgeColor = "text-amber-400";
+                statusText = "ADVERTENCIA";
+            }
+
+            simulationHistory.unshift({
+                time: now,
+                tempHorno,
+                modMix: `${modG}%G / ${modF}%F`,
+                silosHum: `${silos}h / ${humedad}%`,
+                kinematics: `${rpm}RPM / ${amp}mm`,
+                carga,
+                uniformidad,
+                statusText,
+                badgeColor,
+                isAuto: isAutomatic
+            });
+
+            renderHistoryTable();
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = "";
+            simulationHistory.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-400">${item.time} ${item.isAuto ? '<span class="text-[9px] bg-slate-800 px-1 rounded text-slate-500">AUTO</span>' : ''}</td>
+                    <td class="p-3">${item.tempHorno}°C</td>
+                    <td class="p-3">${item.modMix}</td>
+                    <td class="p-3">${item.silosHum}</td>
+                    <td class="p-3">${item.kinematics}</td>
+                    <td class="p-3">${item.carga}t/h</td>
+                    <td class="p-3 font-bold ${item.badgeColor}">${item.uniformidad}</td>
+                    <td class="p-3 font-bold ${item.badgeColor}">${item.statusText}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
     </script>
 </body>
