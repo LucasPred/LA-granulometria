@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRAVAFILT S.A. - Módulo de Variables Físicas y Trazabilidad (IRAM 1545-1981)</title>
+    <title>GRAVAFILT S.A. - Módulo de Variables Físicas y Trazabilidad (Norma IRAM 1545-1981)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -17,7 +17,7 @@
                 <span class="text-xs font-mono text-slate-400">Control de Calidad y Especificaciones del Cliente</span>
             </div>
             <h1 class="text-2xl font-extrabold tracking-tight text-amber-500 mt-1">MÓDULO I: VARIABLES FÍSICAS Y MATERIA PRIMA</h1>
-            <p class="text-xs text-slate-400 mt-1">Parámetros normativos según <strong>Norma IRAM 1545-1981</strong>.</p>
+            <p class="text-xs text-slate-400 mt-1">Parámetros normativos ajustados: Coeficiente de Uniformidad ampliado a tope crítico &lt; 1.5[cite: 1].</p>
         </div>
         <div class="flex items-center gap-3">
             <a href="index.html" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-4 py-2 rounded-xl text-xs font-mono transition-all">&larr; Volver al Panel Central</a>
@@ -26,7 +26,7 @@
 
     <main class="max-w-7xl mx-auto space-y-6">
 
-        <!-- PANEL DE CONTROL DE PARÁMETROS CRÍTICOS (IRAM 1545-1981) -->
+        <!-- PANEL DE CONTROL DE PARÁMETROS CRÍTICOS -->
         <section class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <div>
@@ -64,17 +64,17 @@
                     <input type="range" id="rng-te" min="0.80" max="1.10" step="0.01" value="0.99" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
                 </div>
 
-                <!-- 3. COEFICIENTE DE UNIFORMIDAD (CU) -->
+                <!-- 3. COEFICIENTE DE UNIFORMIDAD (CU) - ACTUALIZADO A 1.5 -->
                 <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
                     <div class="flex justify-between text-xs">
                         <span class="text-slate-400 font-bold">Coef. Uniformidad</span>
-                        <span class="text-[10px] text-slate-500 font-mono">Límite: &lt; 1.6</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Tope Crítico: &lt; 1.5</span>
                     </div>
                     <div class="flex justify-between items-baseline">
-                        <span id="lbl-cu" class="text-lg font-mono font-bold text-amber-400">1.36</span>
-                        <span id="status-cu" class="text-[10px] text-emerald-400 font-bold">NORMAL</span>
+                        <span id="lbl-cu" class="text-lg font-mono font-bold text-amber-400">1.03</span>
+                        <span id="status-cu" class="text-[10px] text-emerald-400 font-bold">ÓPTIMO</span>
                     </div>
-                    <input type="range" id="rng-cu" min="1.10" max="1.90" step="0.01" value="1.36" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                    <input type="range" id="rng-cu" min="1.00" max="1.80" step="0.01" value="1.03" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
                 </div>
 
                 <!-- 4. FINOS 1 (t < 0.60 mm) -->
@@ -108,9 +108,8 @@
 
         <!-- SECCIÓN DE TABLA Y GRÁFICO GRANULOMÉTRICO -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Tabla IRAM -->
             <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">Clasificación Granulométrica (IRAM 1545-1981)</h3>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">Clasificación Granulométrica (Norma IRAM 1545-1981)[cite: 1]</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs font-mono">
                         <thead class="bg-slate-950 text-slate-400 border-b border-slate-800">
@@ -135,7 +134,6 @@
                 </div>
             </div>
 
-            <!-- Gráfico Dinámico -->
             <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">Curva Granulométrica de Control</h3>
                 <div class="relative h-64 w-full">
@@ -148,14 +146,12 @@
 
     <script>
         function validarParametros() {
-            // Leer valores
             let humedad = parseFloat(document.getElementById('rng-humedad').value);
             let te = parseFloat(document.getElementById('rng-te').value);
             let cu = parseFloat(document.getElementById('rng-cu').value);
             let finos1 = parseFloat(document.getElementById('rng-finos1').value);
             let finos2 = parseFloat(document.getElementById('rng-finos2').value);
 
-            // Actualizar etiquetas visuales
             document.getElementById('lbl-humedad').innerText = humedad.toFixed(2) + '%';
             document.getElementById('lbl-te').innerText = te.toFixed(2) + ' mm';
             document.getElementById('lbl-cu').innerText = cu.toFixed(2);
@@ -164,29 +160,30 @@
 
             let criticos = 0;
 
-            // Validación Humedad (< 4.00%)
+            // Humedad (< 4.00%)
             let hEl = document.getElementById('status-humedad');
             if(humedad >= 4.00) { hEl.innerText = "CRÍTICO"; hEl.className = "text-[10px] text-red-500 font-bold"; criticos++; }
             else { hEl.innerText = "NORMAL"; hEl.className = "text-[10px] text-emerald-400 font-bold"; }
 
-            // Validación TE (0.90 - 1.00 mm)
+            // TE (0.90 - 1.00 mm)
             let teEl = document.getElementById('status-te');
             if(te < 0.90 || te > 1.00) { teEl.innerText = "FUERA DE RANGO"; teEl.className = "text-[10px] text-red-500 font-bold"; criticos++; }
             else { teEl.innerText = "NORMAL"; teEl.className = "text-[10px] text-emerald-400 font-bold"; }
 
-            // Validación CU (< 1.6)
+            // Coeficiente de Uniformidad (CU) - Actualizado a límite crítico < 1.5[cite: 1]
             let cuEl = document.getElementById('status-cu');
-            if(cu >= 1.6) { cuEl.innerText = "CRÍTICO"; cuEl.className = "text-[10px] text-red-500 font-bold"; criticos++; }
-            else { cuEl.innerText = "NORMAL"; cuEl.className = "text-[10px] text-emerald-400 font-bold"; }
+            if(cu >= 1.5) { cuEl.innerText = "CRÍTICO"; cuEl.className = "text-[10px] text-red-500 font-bold"; criticos++; }
+            else if(cu > 1.2) { cuEl.innerText = "ACEPTABLE"; cuEl.className = "text-[10px] text-amber-400 font-bold"; }
+            else { cuEl.innerText = "ÓPTIMO"; cuEl.className = "text-[10px] text-emerald-400 font-bold"; }
 
-            // Validación Finos 1 (< 1.00%)
+            // Finos 1 (< 1.00%)
             let f1El = document.getElementById('status-finos1');
             if(finos1 >= 1.00) { f1El.innerText = "CRÍTICO"; f1El.className = "text-[10px] text-red-500 font-bold"; criticos++; }
             else { f1El.innerText = "NORMAL"; f1El.className = "text-[10px] text-emerald-400 font-bold"; }
 
-            // Validación Finos 2 (< 3.00%)
+            // Finos 2 (< 3.00%)
             let f2El = document.getElementById('status-finos2');
-            if(finos2 >= 3.00) { f2El.innerText = "ANOMALÍA / CRÍTICO"; f2El.className = "text-[10px] text-amber-400 font-bold"; criticos++; }
+            if(finos2 >= 3.00) { f2El.innerText = "ANOMALÍA"; f2El.className = "text-[10px] text-amber-400 font-bold"; criticos++; }
             else { f2El.innerText = "NORMAL"; f2El.className = "text-[10px] text-emerald-400 font-bold"; }
 
             // Estado Global
@@ -200,14 +197,13 @@
             }
         }
 
-        // Inicializar Gráfico Chart.js
         const ctx = document.getElementById('granulometriaChart').getContext('2d');
         const granulometriaChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: ['0.1', '0.6', '0.7', '0.85', '1.0', '1.18', '1.4', '1.7', '2.0', '2.36', '10.0'],
                 datasets: [{
-                    label: 'Pasa Acumulado (%)',
+                    label: 'Pasa Acumulado (%)[cite: 1]',
                     data: [0, 0.21, 0.68, 3.07, 10.32, 33.61, 68.71, 94.79, 99.85, 99.96, 100],
                     borderColor: '#f59e0b',
                     backgroundColor: 'rgba(245, 158, 11, 0.1)',
