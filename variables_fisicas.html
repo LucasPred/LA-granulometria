@@ -3,346 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRAVAFILT S.A. - Micrositio Técnico: Variables Físicas y Materia Prima</title>
+    <title>GRAVAFILT S.A. - Módulo de Variables Físicas y Trazabilidad (IRAM 1545-1981)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-4 md:p-6">
 
-    <!-- CAPA DE SEGURIDAD Y AUTENTICACIÓN (LOGIN) -->
-    <div id="auth-modal" class="fixed inset-0 bg-slate-950/95 z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl max-w-md w-full space-y-6">
-            <div class="text-center space-y-2">
-                <span class="bg-amber-500 text-slate-950 text-xs font-bold px-2.5 py-1 rounded tracking-wider">ÁREA RESTRINGIDA</span>
-                <h2 class="text-xl font-extrabold text-amber-500 mt-2">GRAVAFILT S.A. - CONTROL DE ACCESO</h2>
-                <p class="text-xs text-slate-400">Ingrese sus credenciales corporativas para acceder al Micrositio Técnico de Materia Prima.</p>
+    <!-- CABECERA INSTITUCIONAL -->
+    <header class="max-w-7xl mx-auto border-b border-slate-800 pb-4 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <span class="bg-amber-500 text-slate-950 text-xs font-bold px-2.5 py-1 rounded tracking-wider">GRAVAFILT S.A.</span>
+                <span class="text-xs font-mono text-slate-400">Control de Calidad y Especificaciones del Cliente</span>
             </div>
-            <div class="space-y-4">
+            <h1 class="text-2xl font-extrabold tracking-tight text-amber-500 mt-1">MÓDULO I: VARIABLES FÍSICAS Y MATERIA PRIMA</h1>
+            <p class="text-xs text-slate-400 mt-1">Parámetros normativos según <strong>Norma IRAM 1545-1981</strong>.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-4 py-2 rounded-xl text-xs font-mono transition-all">&larr; Volver al Panel Central</a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto space-y-6">
+
+        <!-- PANEL DE CONTROL DE PARÁMETROS CRÍTICOS (IRAM 1545-1981) -->
+        <section class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Usuario Autorizado</label>
-                    <input type="text" id="auth-user" placeholder="Ej. lprediger" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 font-mono">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400">Simulador y Validación de Parámetros de Entrega</h2>
+                    <p class="text-xs text-slate-400">Ajuste los valores de laboratorio para verificar el estado de homologación frente al cliente.</p>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Contraseña de Sistema</label>
-                    <input type="password" id="auth-pass" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 font-mono">
-                </div>
-                <div id="auth-error" class="text-xs text-red-400 text-center hidden font-mono">Credenciales inválidas. Verifique usuario y contraseña.</div>
-                <button onclick="handleLogin()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-lg">
-                    Autenticar e Ingresar al Micrositio
-                </button>
+                <span id="badge-estado-global" class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-mono px-3 py-1 rounded-lg font-bold">ESTADO: HOMOLOGADO</span>
             </div>
-            <div class="text-center">
-                <a href="index.html" class="text-xs text-slate-500 hover:text-slate-400 underline">← Volver al Panel Principal General</a>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                
+                <!-- 1. HUMEDAD -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400 font-bold">Humedad</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Límite: &lt; 4.00%</span>
+                    </div>
+                    <div class="flex justify-between items-baseline">
+                        <span id="lbl-humedad" class="text-lg font-mono font-bold text-amber-400">1.23%</span>
+                        <span id="status-humedad" class="text-[10px] text-emerald-400 font-bold">NORMAL</span>
+                    </div>
+                    <input type="range" id="rng-humedad" min="0.5" max="6.0" step="0.05" value="1.23" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                </div>
+
+                <!-- 2. TAMAÑO EFECTIVO (TE) -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400 font-bold">Tamaño Efec. (TE)</span>
+                        <span class="text-[10px] text-slate-500 font-mono">0.90–1.00 mm</span>
+                    </div>
+                    <div class="flex justify-between items-baseline">
+                        <span id="lbl-te" class="text-lg font-mono font-bold text-amber-400">0.99 mm</span>
+                        <span id="status-te" class="text-[10px] text-emerald-400 font-bold">NORMAL</span>
+                    </div>
+                    <input type="range" id="rng-te" min="0.80" max="1.10" step="0.01" value="0.99" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                </div>
+
+                <!-- 3. COEFICIENTE DE UNIFORMIDAD (CU) -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400 font-bold">Coef. Uniformidad</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Límite: &lt; 1.6</span>
+                    </div>
+                    <div class="flex justify-between items-baseline">
+                        <span id="lbl-cu" class="text-lg font-mono font-bold text-amber-400">1.36</span>
+                        <span id="status-cu" class="text-[10px] text-emerald-400 font-bold">NORMAL</span>
+                    </div>
+                    <input type="range" id="rng-cu" min="1.10" max="1.90" step="0.01" value="1.36" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                </div>
+
+                <!-- 4. FINOS 1 (t < 0.60 mm) -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400 font-bold">Finos 1 (&lt;0.60mm)</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Límite: &lt; 1.00%</span>
+                    </div>
+                    <div class="flex justify-between items-baseline">
+                        <span id="lbl-finos1" class="text-lg font-mono font-bold text-amber-400">0.21%</span>
+                        <span id="status-finos1" class="text-[10px] text-emerald-400 font-bold">NORMAL</span>
+                    </div>
+                    <input type="range" id="rng-finos1" min="0.05" max="2.00" step="0.01" value="0.21" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                </div>
+
+                <!-- 5. FINOS 2 (t < 0.85 mm) -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400 font-bold">Finos 2 (&lt;0.85mm)</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Límite: &lt; 3.00%</span>
+                    </div>
+                    <div class="flex justify-between items-baseline">
+                        <span id="lbl-finos2" class="text-lg font-mono font-bold text-amber-400">3.07%</span>
+                        <span id="status-finos2" class="text-[10px] text-amber-400 font-bold">ANOMALÍA</span>
+                    </div>
+                    <input type="range" id="rng-finos2" min="1.00" max="5.00" step="0.01" value="3.07" oninput="validarParametros()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE TABLA Y GRÁFICO GRANULOMÉTRICO -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Tabla IRAM -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">Clasificación Granulométrica (IRAM 1545-1981)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800">
+                            <tr>
+                                <th class="p-2.5">Tamiz IRAM Nº</th>
+                                <th class="p-2.5">Abertura (mm)</th>
+                                <th class="p-2.5">Pasa Acumulado (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800 text-slate-300">
+                            <tr><td class="p-2">30</td><td class="p-2">0.60</td><td class="p-2 text-amber-400">0.21% (Finos 1)</td></tr>
+                            <tr><td class="p-2">25</td><td class="p-2">0.70</td><td class="p-2">0.68%</td></tr>
+                            <tr><td class="p-2">20</td><td class="p-2">0.85</td><td class="p-2 text-amber-400">3.07% (Finos 2)</td></tr>
+                            <tr><td class="p-2">18</td><td class="p-2">1.00</td><td class="p-2 text-emerald-400">10.32% (D10)</td></tr>
+                            <tr><td class="p-2">16</td><td class="p-2">1.18</td><td class="p-2">33.61%</td></tr>
+                            <tr><td class="p-2">14</td><td class="p-2">1.40</td><td class="p-2">68.71%</td></tr>
+                            <tr><td class="p-2">12</td><td class="p-2">1.70</td><td class="p-2 text-emerald-400">94.79% (D60)</td></tr>
+                            <tr><td class="p-2">10</td><td class="p-2">2.00</td><td class="p-2">99.85%</td></tr>
+                            <tr><td class="p-2">8</td><td class="p-2">2.36</td><td class="p-2">99.96%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gráfico Dinámico -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">Curva Granulométrica de Control</h3>
+                <div class="relative h-64 w-full">
+                    <canvas id="granulometriaChart"></canvas>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- CONTENIDO DEL MICROSITIO (OCULTO HASTA LOGIN) -->
-    <div id="main-content" class="opacity-0 transition-opacity duration-500 max-w-7xl mx-auto space-y-6">
+    </main>
 
-        <!-- CABECERA INSTITUCIONAL -->
-        <header class="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <div class="flex items-center gap-3">
-                    <span class="bg-amber-500 text-slate-950 text-xs font-bold px-2.5 py-1 rounded tracking-wider">MICROSITIO TÉCNICO I</span>
-                    <span class="text-xs font-mono text-slate-400">GRAVAFILT S.A. — Ingeniería de Extracción Fluvial</span>
-                </div>
-                <h1 class="text-2xl font-extrabold tracking-tight text-amber-500 mt-1">Variables Físicas Generales del Entorno y Materia Prima</h1>
-                <p class="text-xs text-slate-400 mt-1">Control riguroso de Módulo de Finura, Batimetría, Atrición Estática en Silos y Humedad Crítica.</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-4 py-2 rounded-xl text-xs font-mono transition-colors">
-                    ← Volver al Panel General
-                </a>
-                <div class="bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-2">
-                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-xs font-mono text-emerald-400 font-bold">SESIÓN SEGURA ACTIVA</span>
-                </div>
-            </div>
-        </header>
-
-        <!-- PANEL DE ENTRADA DE VARIABLES TÉCNICAS (CAMPOS DINÁMICOS) -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            
-            <!-- Variable 1: Módulo de Finura -->
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">1. Módulo de Finura (Vena)</h3>
-                <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <span class="text-slate-400">Muestras / Turno:</span>
-                        <span id="lbl-muestras" class="font-mono font-bold text-amber-400">2 Mínimo</span>
-                    </div>
-                    <input type="range" id="rng-muestras" min="1" max="5" step="1" value="2" oninput="evaluarMicrositio()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
-                </div>
-                <div class="text-[11px] text-slate-400">
-                    Control directo en puerto para detectar desviaciones en la distribución granulométrica de la arena de río entrante.
-                </div>
-            </div>
-
-            <!-- Variable 2: Control Batimétrico y Limos -->
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">2. Batimetría y Limos Orgánicos</h3>
-                <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <span class="text-slate-400">Índice Coloidal (%):</span>
-                        <span id="lbl-coloides" class="font-mono font-bold text-amber-400">1.5%</span>
-                    </div>
-                    <input type="range" id="rng-coloides" min="0.5" max="5.0" step="0.1" value="1.5" oninput="evaluarMicrositio()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
-                </div>
-                <div class="text-[11px] text-slate-400">
-                    Minimización en bancos activos para evitar saturación coloidal en tamices de alta precisión.
-                </div>
-            </div>
-
-            <!-- Variable 3: Atrición Estática en Silos -->
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">3. Atrición en Silos (>16h)</h3>
-                <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <span class="text-slate-400">Tiempo Retención:</span>
-                        <span id="lbl-silos-h" class="font-mono font-bold text-emerald-400">18.0 h</span>
-                    </div>
-                    <input type="range" id="rng-silos-h" min="8" max="28" step="0.5" value="18" oninput="evaluarMicrositio()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
-                </div>
-                <div class="text-[11px] text-slate-400">
-                    Reducción pasiva de humedad superficial y frotamiento intergranular por carga hidrostática.
-                </div>
-            </div>
-
-            <!-- Variable 4: Humedad Máxima de Ingreso -->
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">4. Humedad de Ingreso (Tope 4.5%)</h3>
-                <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <span class="text-slate-400">Humedad Registrada:</span>
-                        <span id="lbl-humedad-ing" class="font-mono font-bold text-emerald-400">3.5%</span>
-                    </div>
-                    <input type="range" id="rng-humedad-ing" min="1.0" max="7.0" step="0.1" value="3.5" oninput="evaluarMicrositio()" class="w-full accent-amber-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
-                </div>
-                <div class="text-[11px] text-slate-400">
-                    Tope garantizado post-drenaje para prevenir sobrecargas de vapor en secado térmico.
-                </div>
-            </div>
-
-        </section>
-
-        <!-- PANEL DE EXPERTISE TÉCNICO: RECOMENDACIONES, ALERTAS Y ESTADÍSTICAS -->
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Recomendaciones de Ingeniería -->
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                    <span>Recomendaciones Operativas</span>
-                </h3>
-                <ul class="space-y-3 text-xs text-slate-300">
-                    <li class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-start gap-2">
-                        <span class="text-amber-500 font-bold">•</span>
-                        <span><strong>Muestreo Georreferenciado:</strong> Asegurar que las 2 muestras mínimas por turno en puerto mapeen sectores de corriente rápida y lenta para promediar el módulo de finura real.</span>
-                    </li>
-                    <li class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-start gap-2">
-                        <span class="text-amber-500 font-bold">•</span>
-                        <span><strong>Gestión de Silos Pulmón:</strong> Mantener estrictamente el régimen rotacional de los silos para que ninguna extracción escape sin cumplir las 16 horas mínimas de atrición pasiva.</span>
-                    </li>
-                    <li class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-start gap-2">
-                        <span class="text-amber-500 font-bold">•</span>
-                        <span><strong>Batimetría Preventiva:</strong> Reevaluar los bancos de extracción cada 14 días para evitar la succión de bolsones con alta concentración de limos arcillosos.</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Alertas Predictivas y Estado Crítico -->
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4 flex flex-col justify-between">
-                <div>
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                        <span>Alertas y Diagnóstico Experto</span>
-                    </h3>
-                    <div id="alerta-box" class="mt-4 p-4 rounded-xl border text-xs bg-emerald-950/40 border-emerald-800 text-emerald-200 space-y-2">
-                        <strong>Estado del Subsistema: ÓPTIMO</strong>
-                        <p id="alerta-texto">Las variables de materia prima se encuentran dentro de los márgenes óptimos para alimentar la franja objetivo 0.9–1.0 sin riesgo de saturación térmica ni coloidal.</p>
-                    </div>
-                </div>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 grid grid-cols-2 gap-4 text-center">
-                    <div>
-                        <span class="text-[10px] text-slate-400 block uppercase">Índice de Viabilidad</span>
-                        <span id="lbl-viabilidad" class="text-xl font-mono font-bold text-emerald-400">98.2%</span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block uppercase">Riesgo Coloidal</span>
-                        <span id="lbl-riesgo-col" class="text-xl font-mono font-bold text-emerald-400">Bajo (1.1%)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Datos Estadísticos y Métricas de Impacto -->
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                    <span>Estadísticas de Comportamiento</span>
-                </h3>
-                <div class="space-y-3 font-mono text-xs">
-                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
-                        <span class="text-slate-400">Eficiencia Atrición Silos:</span>
-                        <span class="text-amber-400 font-bold">94.5%</span>
-                    </div>
-                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
-                        <span class="text-slate-400">Reducción Térmica Vapor:</span>
-                        <span class="text-amber-400 font-bold">-28.4% kJ/kg</span>
-                    </div>
-                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
-                        <span class="text-slate-400">Estabilidad Franja 0.9-1.0:</span>
-                        <span id="lbl-estabilidad-stat" class="text-emerald-400 font-bold">Alta (0.98)</span>
-                    </div>
-                </div>
-                <button onclick="registrarDatoMicrositio()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs uppercase transition-colors cursor-pointer shadow-md">
-                    Registrar Métrica en Bitácora
-                </button>
-            </div>
-
-        </section>
-
-        <!-- SECCIÓN DE BITÁCORA HISTÓRICA LOCAL DEL MICROSITIO -->
-        <section class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
-            <h3 class="text-base font-bold text-amber-400 mb-2">Bitácora de Control: Variables Físicas de Entorno</h3>
-            <p class="text-xs text-slate-400 mb-4">Registro en tiempo real de las mediciones de puerto, atrición y humedad de ingreso.</p>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-300 font-mono">
-                    <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800">
-                        <tr>
-                            <th class="p-3">Timestamp</th>
-                            <th class="p-3">Muestras Puerto</th>
-                            <th class="p-3">Coloides (%)</th>
-                            <th class="p-3">Retención Silos</th>
-                            <th class="p-3">Humedad Ing.</th>
-                            <th class="p-3">Viabilidad</th>
-                            <th class="p-3">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bitacora-table-body" class="divide-y divide-slate-800">
-                        <!-- Inserción dinámica -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-    </div>
-
-    <!-- SCRIPT DE AUTENTICACIÓN Y LÓGICA TÉCNICA -->
     <script>
-        let bitacoraData = [];
+        function validarParametros() {
+            // Leer valores
+            let humedad = parseFloat(document.getElementById('rng-humedad').value);
+            let te = parseFloat(document.getElementById('rng-te').value);
+            let cu = parseFloat(document.getElementById('rng-cu').value);
+            let finos1 = parseFloat(document.getElementById('rng-finos1').value);
+            let finos2 = parseFloat(document.getElementById('rng-finos2').value);
 
-        function handleLogin() {
-            const user = document.getElementById('auth-user').value.trim();
-            const pass = document.getElementById('auth-pass').value.trim();
-            const errorEl = document.getElementById('auth-error');
+            // Actualizar etiquetas visuales
+            document.getElementById('lbl-humedad').innerText = humedad.toFixed(2) + '%';
+            document.getElementById('lbl-te').innerText = te.toFixed(2) + ' mm';
+            document.getElementById('lbl-cu').innerText = cu.toFixed(2);
+            document.getElementById('lbl-finos1').innerText = finos1.toFixed(2) + '%';
+            document.getElementById('lbl-finos2').innerText = finos2.toFixed(2) + '%';
 
-            // Credenciales oficiales de sistema (lprediger / joaquin7)
-            if (user === "lprediger" && pass === "joaquin7") {
-                document.getElementById('auth-modal').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('auth-modal').style.display = 'none';
-                    document.getElementById('main-content').style.opacity = '1';
-                    evaluarMicrositio();
-                    registrarDatoMicrositio(true);
-                }, 300);
+            let criticos = 0;
+
+            // Validación Humedad (< 4.00%)
+            let hEl = document.getElementById('status-humedad');
+            if(humedad >= 4.00) { hEl.innerText = "CRÍTICO"; hEl.className = "text-[10px] text-red-500 font-bold"; criticos++; }
+            else { hEl.innerText = "NORMAL"; hEl.className = "text-[10px] text-emerald-400 font-bold"; }
+
+            // Validación TE (0.90 - 1.00 mm)
+            let teEl = document.getElementById('status-te');
+            if(te < 0.90 || te > 1.00) { teEl.innerText = "FUERA DE RANGO"; teEl.className = "text-[10px] text-red-500 font-bold"; criticos++; }
+            else { teEl.innerText = "NORMAL"; teEl.className = "text-[10px] text-emerald-400 font-bold"; }
+
+            // Validación CU (< 1.6)
+            let cuEl = document.getElementById('status-cu');
+            if(cu >= 1.6) { cuEl.innerText = "CRÍTICO"; cuEl.className = "text-[10px] text-red-500 font-bold"; criticos++; }
+            else { cuEl.innerText = "NORMAL"; cuEl.className = "text-[10px] text-emerald-400 font-bold"; }
+
+            // Validación Finos 1 (< 1.00%)
+            let f1El = document.getElementById('status-finos1');
+            if(finos1 >= 1.00) { f1El.innerText = "CRÍTICO"; f1El.className = "text-[10px] text-red-500 font-bold"; criticos++; }
+            else { f1El.innerText = "NORMAL"; f1El.className = "text-[10px] text-emerald-400 font-bold"; }
+
+            // Validación Finos 2 (< 3.00%)
+            let f2El = document.getElementById('status-finos2');
+            if(finos2 >= 3.00) { f2El.innerText = "ANOMALÍA / CRÍTICO"; f2El.className = "text-[10px] text-amber-400 font-bold"; criticos++; }
+            else { f2El.innerText = "NORMAL"; f2El.className = "text-[10px] text-emerald-400 font-bold"; }
+
+            // Estado Global
+            let globalEl = document.getElementById('badge-estado-global');
+            if(criticos > 0) {
+                globalEl.innerText = "APROBADO BAJO ANOMALÍA";
+                globalEl.className = "bg-amber-950 text-amber-400 border border-amber-800 text-xs font-mono px-3 py-1 rounded-lg font-bold animate-pulse";
             } else {
-                errorEl.classList.remove('hidden');
+                globalEl.innerText = "ESTADO: HOMOLOGADO";
+                globalEl.className = "bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-mono px-3 py-1 rounded-lg font-bold";
             }
         }
 
-        function evaluarMicrositio() {
-            const muestras = parseInt(document.getElementById('rng-muestras').value);
-            const coloides = parseFloat(document.getElementById('rng-coloides').value);
-            const silosH = parseFloat(document.getElementById('rng-silos-h').value);
-            const humedadIng = parseFloat(document.getElementById('rng-humedad-ing').value);
-
-            document.getElementById('lbl-muestras').innerText = muestras + " Mínimo";
-            document.getElementById('lbl-coloides').innerText = coloides.toFixed(1) + "%";
-            document.getElementById('lbl-silos-h').innerText = silosH.toFixed(1) + " h";
-            document.getElementById('lbl-humedad-ing').innerText = humedadIng.toFixed(1) + "%";
-
-            let viabilidad = 98.2 - Math.max(0, (coloides - 2.5) * 8) - Math.max(0, (humedadIng - 4.5) * 12) - (silosH < 16 ? 25 : 0);
-            viabilidad = Math.min(100, Math.max(20, viabilidad));
-
-            let riesgoCol = "Bajo (1.1%)";
-            let alertaBox = document.getElementById('alerta-box');
-            let alertaTexto = document.getElementById('alerta-texto');
-            let estabilidadStat = document.getElementById('lbl-estabilidad-stat');
-
-            if (humedadIng > 4.5 || silosH < 16 || coloides > 3.0) {
-                alertaBox.className = "mt-4 p-4 rounded-xl border text-xs bg-red-950/40 border-red-800 text-red-200 space-y-2";
-                alertaBox.querySelector("strong").innerText = "¡ALERTA CRÍTICA DE MATERIA PRIMA!";
-                alertaTexto.innerText = "Parámetros fuera de norma: Riesgo elevado de saturación en tamices o exceso de humedad para secado térmico.";
-                riesgoCol = "Alto (>35%)";
-                estabilidadStat.className = "text-red-400 font-bold";
-                estabilidadStat.innerText = "Crítico (0.82)";
-            } else if (coloides > 2.2 || humedadIng > 3.8) {
-                alertaBox.className = "mt-4 p-4 rounded-xl border text-xs bg-amber-950/40 border-amber-800 text-amber-200 space-y-2";
-                alertaBox.querySelector("strong").innerText = "ADVERTENCIA OPERATIVA";
-                alertaTexto.innerText = "Incremento moderado de limos o humedad superficial. Vigilar rendimiento en zaranda secundaria.";
-                riesgoCol = "Moderado (14.2%)";
-                estabilidadStat.className = "text-amber-400 font-bold";
-                estabilidadStat.innerText = "Moderado (0.91)";
-            } else {
-                alertaBox.className = "mt-4 p-4 rounded-xl border text-xs bg-emerald-950/40 border-emerald-800 text-emerald-200 space-y-2";
-                alertaBox.querySelector("strong").innerText = "Estado del Subsistema: ÓPTIMO";
-                alertaTexto.innerText = "Las variables de materia prima se encuentran dentro de los márgenes óptimos para alimentar la franja objetivo 0.9–1.0.";
-                riesgoCol = "Bajo (1.1%)";
-                estabilidadStat.className = "text-emerald-400 font-bold";
-                estabilidadStat.innerText = "Alta (0.98)";
+        // Inicializar Gráfico Chart.js
+        const ctx = document.getElementById('granulometriaChart').getContext('2d');
+        const granulometriaChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['0.1', '0.6', '0.7', '0.85', '1.0', '1.18', '1.4', '1.7', '2.0', '2.36', '10.0'],
+                datasets: [{
+                    label: 'Pasa Acumulado (%)',
+                    data: [0, 0.21, 0.68, 3.07, 10.32, 33.61, 68.71, 94.79, 99.85, 99.96, 100],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    fill: true,
+                    tension: 0.2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                    y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' }, max: 100, min: 0 }
+                },
+                plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } }
             }
-
-            document.getElementById('lbl-viabilidad').innerText = viabilidad.toFixed(1) + "%";
-            document.getElementById('lbl-riesgo-col').innerText = riesgoCol;
-        }
-
-        function registrarDatoMicrositio(isAuto = false) {
-            const now = new Date().toLocaleTimeString();
-            const muestras = document.getElementById('rng-muestras').value;
-            const coloides = document.getElementById('rng-coloides').value;
-            const silosH = document.getElementById('rng-silos-h').value;
-            const humedadIng = document.getElementById('rng-humedad-ing').value;
-            const viabilidad = document.getElementById('lbl-viabilidad').innerText;
-            const riesgoCol = document.getElementById('lbl-riesgo-col').innerText;
-
-            let badgeClass = "text-emerald-400";
-            let statusLabel = "ÓPTIMO";
-            if (parseFloat(humedadIng) > 4.5 || parseFloat(silosH) < 16) {
-                badgeClass = "text-red-400";
-                statusLabel = "CRÍTICO";
-            }
-
-            bitacoraData.unshift({
-                time: now,
-                muestras,
-                coloides: coloides + "%",
-                silosH: silosH + "h",
-                humedadIng: humedadIng + "%",
-                viabilidad,
-                statusLabel,
-                badgeClass,
-                isAuto
-            });
-
-            renderBitacora();
-        }
-
-        function renderBitacora() {
-            const tbody = document.getElementById('bitacora-table-body');
-            tbody.innerHTML = "";
-            bitacoraData.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-800/50 transition-colors";
-                tr.innerHTML = `
-                    <td class="p-3 text-slate-400">${item.time} ${item.isAuto ? '<span class="text-[9px] bg-slate-800 px-1 rounded text-slate-500">INIT</span>' : ''}</td>
-                    <td class="p-3">${item.muestras} Muestras</td>
-                    <td class="p-3">${item.coloides}</td>
-                    <td class="p-3">${item.silosH}</td>
-                    <td class="p-3">${item.humedadIng}</td>
-                    <td class="p-3 font-bold text-slate-200">${item.viabilidad}</td>
-                    <td class="p-3 font-bold ${item.badgeClass}">${item.statusLabel}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+        });
     </script>
 </body>
 </html>
