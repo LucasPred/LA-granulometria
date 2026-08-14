@@ -450,6 +450,8 @@
             document.getElementById('lbl-prob-exito').innerText = probExito.toFixed(1) + '%';
             document.getElementById('lbl-riesgo-cegamiento').innerText = riesgoCeg;
 
+         // Cierre y validación de la función principal de actualización del gráfico dinámico
+        function updateSimulationChart(humedad, uniformidad) {
             if (chartInstance) {
                 let shiftFactor = (humedad - 3.5) * 2;
                 chartInstance.data.datasets[0].data = [
@@ -467,8 +469,10 @@
 
         function updateStatusBox(elementId, cssClasses, text) {
             const el = document.getElementById(elementId);
-            el.className = "mt-4 p-3 rounded-lg border text-xs " + cssClasses;
-            el.innerHTML = text;
+            if (el) {
+                el.className = "mt-4 p-3 rounded-lg border text-xs " + cssClasses;
+                el.innerHTML = text;
+            }
         }
 
         function takeSnapshot(isAutomatic = false) {
@@ -481,16 +485,23 @@
             const rpm = document.getElementById('rng-rpm').value;
             const amp = document.getElementById('rng-amp').value;
             const carga = document.getElementById('rng-carga').value;
-            const uniformidad = document.getElementById('lbl-uniformidad').innerText;
+            const uniformidadEl = document.getElementById('lbl-uniformidad');
+            const uniformidad = uniformidadEl ? uniformidadEl.innerText : "1.00";
             
             let badgeColor = "text-emerald-400";
             let statusText = "ÓPTIMO";
+            
             if (parseFloat(uniformidad) > 1.1 || parseFloat(humedad) > 4.5) {
                 badgeColor = "text-red-400";
                 statusText = "CRÍTICO";
             } else if (parseFloat(uniformidad) > 1.05 || parseFloat(humedad) > 3.8) {
                 badgeColor = "text-amber-400";
                 statusText = "ADVERTENCIA";
+            }
+
+            // Aseguramos que el array global exista
+            if (typeof simulationHistory === 'undefined') {
+                window.simulationHistory = [];
             }
 
             simulationHistory.unshift({
@@ -506,15 +517,22 @@
                 isAuto: isAutomatic
             });
 
+            // Límite opcional de historial para rendimiento óptimo en UI
+            if (simulationHistory.length > 50) {
+                simulationHistory.pop();
+            }
+
             renderHistoryTable();
         }
 
         function renderHistoryTable() {
             const tbody = document.getElementById('history-table-body');
+            if (!tbody) return;
+            
             tbody.innerHTML = "";
             simulationHistory.forEach(item => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-800/50 transition-colors";
+                tr.className = "hover:bg-slate-800/50 transition-colors border-b border-slate-900/50";
                 tr.innerHTML = `
                     <td class="p-3 text-slate-400">${item.time} ${item.isAuto ? '<span class="text-[9px] bg-slate-800 px-1 rounded text-slate-500">AUTO</span>' : ''}</td>
                     <td class="p-3">${item.tempHorno}°C</td>
