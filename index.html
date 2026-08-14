@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRAVAFILT S.A. - Consola Gerencial de Simulación Interactiva (Franja 0.9)</title>
+    <title>GRAVAFILT S.A. - Consola Gerencial, Mallas y Curvas Granulométricas (Franja 0.9)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -16,8 +16,8 @@
                 <span class="bg-amber-500 text-slate-950 text-xs font-bold px-2.5 py-1 rounded tracking-wider">GRAVAFILT S.A.</span>
                 <span class="text-xs font-mono text-slate-400">Directorio Ejecutivo • Planta Paraná</span>
             </div>
-            <h1 class="text-2xl font-extrabold text-white mt-1">Consola Interactiva: Simulación de Escenarios y Optimización de Franja 0.9</h1>
-            <p class="text-slate-400 text-sm mt-1">Simulador bidireccional para evaluar impacto comercial, normativo IRAM y ajuste físico-mecánico de zarandas.</p>
+            <h1 class="text-2xl font-extrabold text-white mt-1">Consola 0.9 Profesional: Mallas, Dinámica y Curvas Acumuladas</h1>
+            <p class="text-slate-400 text-sm mt-1">Simulador bidireccional integral con especificación de tejidos, fatiga de hilos y control normativo IRAM.</p>
         </div>
         <div class="flex flex-col items-end gap-2">
             <div id="status-general-badge" class="px-4 py-2 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded-xl text-xs font-bold animate-pulse">
@@ -29,35 +29,67 @@
 
     <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- COLUMNA 1 Y 2: MODOS DE JUEGO / ESCENARIOS Y VARIABLES -->
+        <!-- COLUMNA 1 Y 2: ESCENARIOS, MECÁNICA, MALLAS Y LABORATORIO -->
         <div class="lg:col-span-2 space-y-6">
 
-            <!-- SELECTOR RÁPIDO DE ESCENARIOS (EXPERIENCIA GERENCIAL) -->
+            <!-- SELECTOR RÁPIDO DE ESCENARIOS -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
                 <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
                     <span>🎮</span> Banco de Escenarios Gerenciales (Prueba de Estrés)
                 </h2>
-                <p class="text-xs text-slate-400 mb-3">Seleccione un perfil de prueba para verificar la respuesta del sistema ante variaciones críticas del mercado o de planta:</p>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <button onclick="cargarEscenario('optimo')" class="bg-slate-950 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500 p-3 rounded-lg text-left transition-all cursor-pointer">
                         <span class="text-xs font-bold text-emerald-400 block">🟢 Escenario Base Óptimo</span>
-                        <span class="text-[10px] text-slate-400 block mt-1">Masa madre estándar, humedad 3.5%, 3 decks, Kv ideal.</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">AISI 304, hilo 0.30mm, 3 decks, Kv ideal.</span>
                     </button>
                     <button onclick="cargarEscenario('humedad')" class="bg-slate-950 hover:bg-amber-950/40 border border-slate-800 hover:border-amber-500 p-3 rounded-lg text-left transition-all cursor-pointer">
                         <span class="text-xs font-bold text-amber-400 block">🟡 Estrés por Humedad (4.8%)</span>
-                        <span class="text-[10px] text-slate-400 block mt-1">Evalúa el impacto de vapor y colmatación en malla 0.9.</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">Colmatación y vapor en malla 0.9.</span>
                     </button>
                     <button onclick="cargarEscenario('desbalance')" class="bg-slate-950 hover:bg-rose-950/40 border border-slate-800 hover:border-rose-500 p-3 rounded-lg text-left transition-all cursor-pointer">
-                        <span class="text-xs font-bold text-rose-400 block">🔴 Desbalance de Masa Madre</span>
-                        <span class="text-[10px] text-slate-400 block mt-1">Exceso de finos y sobrecarga en pendiente del deck.</span>
+                        <span class="text-xs font-bold text-rose-400 block">🔴 Fatiga y Hilo Inadecuado</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">Hilo excesivamente grueso (0.45mm) y bajo área abierta.</span>
                     </button>
                 </div>
             </div>
 
-            <!-- 1. CONFIGURACIÓN MECÁNICA Y FÍSICA (ZARANDA Y SECADO) -->
+            <!-- 1. ESPECIFICACIÓN TÉCNICA DE MALLAS Y TEJIDO (FRANJA 0.9) -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
                 <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
-                    <span>⚙️</span> 1. Regulación de Variables Físicas y Mecánicas
+                    <span>🧵</span> 1. Arquitectura de Mallas, Materiales y Geometría de Hilos
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-300 block mb-1">Material de Confección</label>
+                        <select id="sel-material" onchange="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
+                            <option value="aisi304" selected>Acero Inoxidable AISI 304 (Óptimo)</option>
+                            <option value="carbono">Acero al Alto Carbono (Anti-desgaste)</option>
+                            <option value="poliuretano">Poliuretano Modular (Alta Flexibilidad)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-300 block mb-1">Abertura Nominal (mm)</label>
+                        <select id="sel-abertura" onchange="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
+                            <option value="0.90" selected>0.90 mm (Estándar Franja Objetivo)</option>
+                            <option value="0.92">0.92 mm (Tolerancia Alta)</option>
+                            <option value="0.88">0.88 mm (Tolerancia Fina)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-300 block mb-1">Grosor de Hilo / Alambre (mm)</label>
+                        <select id="sel-hilo" onchange="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
+                            <option value="0.30" selected>0.30 mm (Máx. Área Abierta ~58%)</option>
+                            <option value="0.35">0.35 mm (Balance Rigidez ~52%)</option>
+                            <option value="0.45">0.45 mm (Alta Resistencia / Menor Área)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. REGULACIÓN DE VARIABLES FÍSICAS Y MECÁNICAS -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
+                <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
+                    <span>⚙️</span> 2. Regulación de Vibración, Contrapeso y Pendiente
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
@@ -100,76 +132,65 @@
                 </div>
             </div>
 
-            <!-- 2. ENTORNO GRANULOMÉTRICO (LABORATORIO - MASA MADRE) -->
+            <!-- 3. ENTORNO GRANULOMÉTRICO (SERIE COMPLETA DE LABORATORIO) -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
                 <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
-                    <span>🔬</span> 2. Entorno Granulométrico de Ingreso (Masa Madre)
+                    <span>🔬</span> 3. Serie Completa de Tamices de Laboratorio (% Retenido Individual)
                 </h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div>
+                        <label class="text-xs text-slate-300 block mb-1">Retenido 2.00 mm (%)</label>
+                        <input type="number" id="lab-2-00" value="2.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-300 block mb-1">Retenido 1.68 mm (%)</label>
+                        <input type="number" id="lab-1-68" value="5.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
+                    </div>
                     <div>
                         <label class="text-xs text-slate-300 block mb-1">Retenido 1.20 mm (%)</label>
-                        <input type="number" id="lab-1-20" value="12.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
+                        <input type="number" id="lab-1-20" value="10.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
                     </div>
                     <div>
                         <label class="text-xs text-slate-300 block mb-1">Retenido 1.00 mm (%)</label>
-                        <input type="number" id="lab-1-00" value="25.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
+                        <input type="number" id="lab-1-00" value="20.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="text-xs text-slate-300 block mb-1">Retenido 0.90 mm (%) [Franja]</label>
-                        <input type="number" id="lab-0-90" value="38.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none border-amber-500/50">
+                        <label class="text-xs text-slate-300 block mb-1 text-amber-400 font-bold">Retenido 0.90 mm (%) [Obj]</label>
+                        <input type="number" id="lab-0-90" value="35.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-amber-500 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
                     </div>
                     <div>
-                        <label class="text-xs text-slate-300 block mb-1">Pasante < 0.85 mm (%)</label>
-                        <input type="number" id="lab-finos" value="25.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
+                        <label class="text-xs text-slate-300 block mb-1">Retenido 0.75 mm (%)</label>
+                        <input type="number" id="lab-0-75" value="18.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-300 block mb-1">Retenido 0.60 mm (%)</label>
+                        <input type="number" id="lab-0-60" value="6.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-300 block mb-1">Fondo (< 0.60 mm) (%)</label>
+                        <input type="number" id="lab-fondo" value="4.0" step="0.5" oninput="evaluarSistema()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-sm focus:border-amber-500 outline-none">
                     </div>
                 </div>
             </div>
 
-            <!-- 3. MATRIZ DE SEMÁFOROS COMPARATIVOS IRAM -->
+            <!-- 4. MATRIZ DE SEMÁFOROS COMPARATIVOS IRAM -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
                 <h2 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
-                    <span>🚦</span> 3. Matriz de Control por Tamiz y Semáforo de Cumplimiento
+                    <span>🚦</span> 4. Matriz de Control por Tamiz y Semáforo de Cumplimiento
                 </h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-slate-300">
                         <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800 font-mono">
                             <tr>
                                 <th class="p-3">Tamiz / Malla</th>
-                                <th class="p-3">Valor Simulación</th>
-                                <th class="p-3">Valor Ideal IRAM</th>
-                                <th class="p-3">Desviación</th>
+                                <th class="p-3">Retenido Ind.</th>
+                                <th class="p-3">Retenido Acumulado</th>
+                                <th class="p-3">Pasante Acumulado</th>
                                 <th class="p-3 text-center">Estado (Semáforo)</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800 font-mono">
-                            <tr>
-                                <td class="p-3 font-bold text-white">1.20 mm (Gruesos)</td>
-                                <td id="real-120" class="p-3">--</td>
-                                <td class="p-3 text-slate-400">10.0% - 15.0%</td>
-                                <td id="desv-120" class="p-3">--</td>
-                                <td class="p-3 text-center"><span id="sem-120" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">ÓPTIMO</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold text-white">1.00 mm (Superior)</td>
-                                <td id="real-100" class="p-3">--</td>
-                                <td class="p-3 text-slate-400">22.0% - 28.0%</td>
-                                <td id="desv-100" class="p-3">--</td>
-                                <td class="p-3 text-center"><span id="sem-100" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">ÓPTIMO</span></td>
-                            </tr>
-                            <tr class="bg-amber-950/20">
-                                <td class="p-3 font-bold text-amber-400">0.90 mm (Franja Objetivo)</td>
-                                <td id="real-090" class="p-3 font-bold text-amber-400">--</td>
-                                <td class="p-3 text-slate-400">35.0% - 42.0%</td>
-                                <td id="desv-090" class="p-3">--</td>
-                                <td class="p-3 text-center"><span id="sem-090" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">ÓPTIMO</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold text-white">< 0.85 mm (Finos / Colas)</td>
-                                <td id="real-finos" class="p-3">--</td>
-                                <td class="p-3 text-slate-400">20.0% - 28.0%</td>
-                                <td id="desv-finos" class="p-3">--</td>
-                                <td class="p-3 text-center"><span id="sem-finos" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">ÓPTIMO</span></td>
-                            </tr>
+                        <tbody id="tabla-tamices-body" class="divide-y divide-slate-800 font-mono">
+                            <!-- Inyección dinámica por JS -->
                         </tbody>
                     </table>
                 </div>
@@ -177,24 +198,28 @@
 
         </div>
 
-        <!-- COLUMNA 3: DIAGNÓSTICO EJECUTIVO Y RECOMENDACIÓN INVERSA -->
+        <!-- COLUMNA 3: DIAGNÓSTICO, RECOMENDACIÓN Y GRÁFICOS TÉCNICOS -->
         <div class="space-y-6">
 
-            <!-- TARJETA DE RECOMENDACIÓN AUTOMÁTICA (MODO INVERSO) -->
+            <!-- TARJETA DE RECOMENDACIÓN AUTOMÁTICA -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4">
                 <h3 class="text-sm font-bold text-amber-400">Diagnóstico y Recomendación Gerencial</h3>
                 <p id="diagnostico-texto" class="text-xs text-slate-300 leading-relaxed">
-                    Sistema operando dentro de los parámetros de alta eficiencia. La relación entre masa madre y energía cinética garantiza el cumplimiento estricto del producto comercial.
+                    Sistema operando dentro de los parámetros de alta eficiencia.
                 </p>
 
                 <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
                     <span class="text-[10px] uppercase text-cyan-400 font-bold block">💡 Asistente de Ajuste Inverso:</span>
                     <p id="recomendacion-inversa" class="text-xs text-slate-300 italic">
-                        No se requieren modificaciones mecánicas. El sistema está calibrado para entrega directa.
+                        Ninguna acción necesaria.
                     </p>
                 </div>
 
                 <div class="space-y-2 pt-2 border-t border-slate-800">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">Área Abierta Calculada:</span>
+                        <span id="area-abierta-val" class="font-mono font-bold text-amber-400">--</span>
+                    </div>
                     <div class="flex justify-between text-xs">
                         <span class="text-slate-400">Coeficiente Lanzamiento ($K_v$):</span>
                         <span id="k-v-val" class="font-mono font-bold text-cyan-400">--</span>
@@ -210,11 +235,19 @@
                 </div>
             </div>
 
-            <!-- GRÁFICO COMPARATIVO REAL VS IDEAL -->
+            <!-- GRÁFICO 1: CURVA DE % PASANTE ACUMULADO -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
-                <h3 class="text-sm font-bold text-slate-300 mb-3">Curva de Desempeño: Real vs. Ideal</h3>
-                <div class="relative h-64">
-                    <canvas id="chartComparativa"></canvas>
+                <h3 class="text-sm font-bold text-slate-300 mb-3">Curva Granulométrica (% Pasante Acumulado)</h3>
+                <div class="relative h-48">
+                    <canvas id="chartPasante"></canvas>
+                </div>
+            </div>
+
+            <!-- GRÁFICO 2: CURVA DE % RETENIDO ACUMULADO -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
+                <h3 class="text-sm font-bold text-slate-300 mb-3">Curva Granulométrica (% Retenido Acumulado)</h3>
+                <div class="relative h-48">
+                    <canvas id="chartRetenido"></canvas>
                 </div>
             </div>
 
@@ -222,91 +255,175 @@
 
     </main>
 
-    <!-- SCRIPT DE LÓGICA E INTERACTIVIDAD GERENCIAL -->
+    <!-- SCRIPT DE LÓGICA TÉCNICA Y GRÁFICOS BIDIRECCIONALES -->
     <script>
-        let chartInstance = null;
+        let chartPasante = null;
+        let chartRetenido = null;
+
+        const tamicesAperturas = [2.00, 1.68, 1.20, 1.00, 0.90, 0.75, 0.60, 0.00];
+        const tamicesNombres = ['2.00 mm', '1.68 mm', '1.20 mm', '1.00 mm', '0.90 mm (Obj)', '0.75 mm', '0.60 mm', 'Fondo (<0.6)'];
 
         window.addEventListener('DOMContentLoaded', () => {
-            initChart();
+            initCharts();
             evaluarSistema();
         });
 
         function cargarEscenario(tipo) {
             if (tipo === 'optimo') {
+                document.getElementById('sel-material').value = "aisi304";
+                document.getElementById('sel-abertura').value = "0.90";
+                document.getElementById('sel-hilo').value = "0.30";
                 document.getElementById('sel-pisos').value = "3";
                 document.getElementById('rng-contrapeso').value = "75";
                 document.getElementById('rng-pendiente').value = "3.0";
                 document.getElementById('rng-humedad').value = "3.5";
                 document.getElementById('rng-rpm').value = "1350";
-                document.getElementById('lab-1-20').value = "12.0";
-                document.getElementById('lab-1-00').value = "25.0";
-                document.getElementById('lab-0-90').value = "38.0";
-                document.getElementById('lab-finos').value = "25.0";
+                document.getElementById('lab-2-00').value = "2.0";
+                document.getElementById('lab-1-68').value = "5.0";
+                document.getElementById('lab-1-20').value = "10.0";
+                document.getElementById('lab-1-00').value = "20.0";
+                document.getElementById('lab-0-90').value = "35.0";
+                document.getElementById('lab-0-75').value = "18.0";
+                document.getElementById('lab-0-60').value = "6.0";
+                document.getElementById('lab-fondo').value = "4.0";
             } else if (tipo === 'humedad') {
+                document.getElementById('sel-material').value = "aisi304";
+                document.getElementById('sel-abertura').value = "0.90";
+                document.getElementById('sel-hilo').value = "0.35";
                 document.getElementById('sel-pisos').value = "3";
                 document.getElementById('rng-contrapeso').value = "70";
                 document.getElementById('rng-pendiente').value = "3.5";
-                document.getElementById('rng-humedad').value = "4.8"; // Crítico
+                document.getElementById('rng-humedad').value = "4.8";
                 document.getElementById('rng-rpm').value = "1200";
-                document.getElementById('lab-1-20').value = "10.0";
-                document.getElementById('lab-1-00').value = "22.0";
-                document.getElementById('lab-0-90').value = "40.0";
-                document.getElementById('lab-finos').value = "28.0";
+                document.getElementById('lab-2-00').value = "1.0";
+                document.getElementById('lab-1-68').value = "4.0";
+                document.getElementById('lab-1-20').value = "8.0";
+                document.getElementById('lab-1-00').value = "15.0";
+                document.getElementById('lab-0-90').value = "45.0";
+                document.getElementById('lab-0-75').value = "15.0";
+                document.getElementById('lab-0-60').value = "8.0";
+                document.getElementById('lab-fondo').value = "4.0";
             } else if (tipo === 'desbalance') {
+                document.getElementById('sel-material').value = "carbono";
+                document.getElementById('sel-abertura').value = "0.92";
+                document.getElementById('sel-hilo').value = "0.45"; // Hilo grueso -> Bajo área abierta
                 document.getElementById('sel-pisos').value = "2";
-                document.getElementById('rng-contrapeso').value = "55"; // Bajo
-                document.getElementById('rng-pendiente').value = "4.5"; // Muy inclinado
+                document.getElementById('rng-contrapeso').value = "55";
+                document.getElementById('rng-pendiente').value = "4.5";
                 document.getElementById('rng-humedad').value = "3.8";
                 document.getElementById('rng-rpm').value = "1100";
-                document.getElementById('lab-1-20').value = "18.0";
-                document.getElementById('lab-1-00').value = "15.0";
-                document.getElementById('lab-0-90').value = "25.0";
-                document.getElementById('lab-finos').value = "42.0"; // Exceso finos
+                document.getElementById('lab-2-00').value = "5.0";
+                document.getElementById('lab-1-68').value = "8.0";
+                document.getElementById('lab-1-20').value = "15.0";
+                document.getElementById('lab-1-00').value = "12.0";
+                document.getElementById('lab-0-90').value = "20.0";
+                document.getElementById('lab-0-75').value = "20.0";
+                document.getElementById('lab-0-60').value = "10.0";
+                document.getElementById('lab-fondo').value = "10.0";
             }
             evaluarSistema();
         }
 
-        function initChart() {
-            const ctx = document.getElementById('chartComparativa').getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
+        function initCharts() {
+            const ctxPasante = document.getElementById('chartPasante').getContext('2d');
+            chartPasante = new Chart(ctxPasante, {
+                type: 'line',
                 data: {
-                    labels: ['1.20 mm', '1.00 mm', '0.90 mm', '< 0.85 mm'],
+                    labels: tamicesNombres,
                     datasets: [{
-                        label: 'Simulación Real (%)',
-                        data: [12, 25, 38, 25],
-                        backgroundColor: '#f59e0b',
-                        borderRadius: 4
-                    }, {
-                        label: 'Estándar Ideal IRAM (%)',
-                        data: [12.5, 25.0, 38.5, 24.0],
-                        backgroundColor: '#06b6d4',
-                        borderRadius: 4
+                        label: '% Pasante Acumulado',
+                        data: [],
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        fill: true,
+                        tension: 0.2,
+                        pointBackgroundColor: '#06b6d4'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: { beginAtZero: true, max: 60, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                        y: { min: 0, max: 100, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 9 } } }
                     },
-                    plugins: { legend: { labels: { color: '#f8fafc', font: { size: 10 } } } }
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            const ctxRetenido = document.getElementById('chartRetenido').getContext('2d');
+            chartRetenido = new Chart(ctxRetenido, {
+                type: 'line',
+                data: {
+                    labels: tamicesNombres,
+                    datasets: [{
+                        label: '% Retenido Acumulado',
+                        data: [],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        fill: true,
+                        tension: 0.2,
+                        pointBackgroundColor: '#f59e0b'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 0, max: 100, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 9 } } }
+                    },
+                    plugins: { legend: { display: false } }
                 }
             });
         }
 
         function evaluarSistema() {
-            const v120 = parseFloat(document.getElementById('lab-1-20').value) || 0;
-            const v100 = parseFloat(document.getElementById('lab-1-00').value) || 0;
-            const v090 = parseFloat(document.getElementById('lab-0-90').value) || 0;
-            const vFinos = parseFloat(document.getElementById('lab-finos').value) || 0;
+            // Recoger valores de la serie de tamices
+            const indValues = [
+                parseFloat(document.getElementById('lab-2-00').value) || 0,
+                parseFloat(document.getElementById('lab-1-68').value) || 0,
+                parseFloat(document.getElementById('lab-1-20').value) || 0,
+                parseFloat(document.getElementById('lab-1-00').value) || 0,
+                parseFloat(document.getElementById('lab-0-90').value) || 0,
+                parseFloat(document.getElementById('lab-0-75').value) || 0,
+                parseFloat(document.getElementById('lab-0-60').value) || 0,
+                parseFloat(document.getElementById('lab-fondo').value) || 0
+            ];
 
+            const sumaTotal = indValues.reduce((a, b) => a + b, 0);
+            const factor = sumaTotal > 0 ? 100 / sumaTotal : 1;
+            const indNorm = indValues.map(v => v * factor);
+
+            let retenidoAcumulado = [];
+            let pasanteAcumulado = [];
+            let acumuladorRet = 0;
+
+            for (let i = 0; i < indNorm.length; i++) {
+                acumuladorRet += indNorm[i];
+                retenidoAcumulado.push(acumuladorRet);
+            }
+
+            pasanteAcumulado.push(100);
+            for (let i = 0; i < indNorm.length - 1; i++) {
+                let pasante = 100 - retenidoAcumulado[i];
+                pasanteAcumulado.push(Math.max(0, pasante));
+            }
+
+            // Variables de mallas y físicas
+            const material = document.getElementById('sel-material').value;
+            const abertura = parseFloat(document.getElementById('sel-abertura').value);
+            const hilo = parseFloat(document.getElementById('sel-hilo').value);
             const numPisos = parseInt(document.getElementById('sel-pisos').value);
             const contrapeso = parseFloat(document.getElementById('rng-contrapeso').value);
             const pendiente = parseFloat(document.getElementById('rng-pendiente').value);
             const humedad = parseFloat(document.getElementById('rng-humedad').value) || 3.5;
             const rpm = parseInt(document.getElementById('rng-rpm').value) || 1350;
+
+            // Cálculo físico del Área Abierta (%) de la malla cuadrada:
+            // AA = [ Abertura^2 / (Abertura + Hilo)^2 ] * 100
+            const areaAbierta = Math.pow(abertura, 2) / Math.pow(abertura + hilo, 2) * 100;
+            document.getElementById('area-abierta-val').innerText = areaAbierta.toFixed(1) + '%';
 
             document.getElementById('lbl-contrapeso').innerText = contrapeso + '%';
             document.getElementById('lbl-pendiente').innerText = pendiente.toFixed(1) + '°';
@@ -319,61 +436,60 @@
             const kv = (ampEfectiva * Math.pow(omega, 2)) / 9810;
             document.getElementById('k-v-val').innerText = kv.toFixed(2);
 
-            const ideal120 = 12.5;
-            const ideal100 = 25.0;
-            const ideal090 = 38.5;
-            const idealFinos = 24.0;
-
-            const desv120 = v120 - ideal120;
-            const desv100 = v100 - ideal100;
-            const desv090 = v090 - ideal090;
-            const desvFinos = vFinos - idealFinos;
-
-            document.getElementById('real-120').innerText = v120.toFixed(1) + '%';
-            document.getElementById('desv-120').innerText = (desv120 > 0 ? '+' : '') + desv120.toFixed(1) + '%';
-
-            document.getElementById('real-100').innerText = v100.toFixed(1) + '%';
-            document.getElementById('desv-100').innerText = (desv100 > 0 ? '+' : '') + desv100.toFixed(1) + '%';
-
-            document.getElementById('real-090').innerText = v090.toFixed(1) + '%';
-            document.getElementById('desv-090').innerText = (desv090 > 0 ? '+' : '') + desv090.toFixed(1) + '%';
-
-            document.getElementById('real-finos').innerText = vFinos.toFixed(1) + '%';
-            document.getElementById('desv-finos').innerText = (desvFinos > 0 ? '+' : '') + desvFinos.toFixed(1) + '%';
+            // Renderizar Tabla de Tamices con Semáforos
+            const tbody = document.getElementById('tabla-tamices-body');
+            tbody.innerHTML = '';
 
             let estadoGlobal = "ÓPTIMO";
             let colorGlobalBadge = "px-4 py-2 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded-xl text-xs font-bold animate-pulse";
             let riesgoComercial = "Bajo";
             let colorRiesgo = "text-emerald-400";
             let eficiencia = numPisos === 3 ? 97.5 : 91.0;
-            let textoDiag = "El sistema se encuentra sincronizado. Producción de franja 0.9 asegurada bajo norma IRAM.";
-            let recInversa = "Ninguna acción necesaria. Continuar con el plan operativo actual.";
+            
+            // Si el área abierta es baja por hilo grueso, penaliza levemente la eficiencia
+            if (areaAbierta < 45) eficiencia -= 5.0;
 
-            const sem090 = document.getElementById('sem-090');
+            let textoDiag = "Configuración de tejido y vibración óptima para el cumplimiento IRAM.";
+            let recInversa = "Operación estable. Sin ajustes requeridos.";
 
-            if (humedad > 4.2 || Math.abs(desv090) > 8 || kv < 3.3 || contrapeso < 65) {
-                sem090.className = "px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-950 text-rose-400 border border-rose-800";
-                sem090.innerText = "CRÍTICO";
-                estadoGlobal = "ALERTA CRÍTICA";
-                colorGlobalBadge = "px-4 py-2 bg-rose-950 text-rose-400 border border-rose-800 rounded-xl text-xs font-bold animate-pulse";
-                riesgoComercial = "Alto (Fuera de Especificación)";
-                colorRiesgo = "text-rose-400";
-                eficiencia = 68.0;
-                textoDiag = "Desviación crítica en la franja 0.9. La combinación de humedad o energía cinética insuficiente genera colmatación en malla.";
-                recInversa = "⚠️ Ajuste Inverso Requerido: Elevar la temperatura del horno rotativo para bajar humedad a <3.5%, incrementar contrapeso a 80% y regular pendiente a 3.0°.";
-            } else if (Math.abs(desv090) > 4 || humedad > 3.8 || kv < 3.5 || pendiente > 4.0) {
-                sem090.className = "px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-950 text-amber-400 border border-amber-800";
-                sem090.innerText = "ADVERTENCIA";
-                estadoGlobal = "ADVERTENCIA";
-                colorGlobalBadge = "px-4 py-2 bg-amber-950 text-amber-400 border border-amber-800 rounded-xl text-xs font-bold animate-pulse";
-                riesgoComercial = "Moderado (Riesgo de Rechazo)";
-                colorRiesgo = "text-amber-400";
-                eficiencia = 84.5;
-                textoDiag = "Tendencia de desvío detectada en el entorno granulométrico o en la velocidad de avance.";
-                recInversa = "💡 Ajuste Inverso Requerido: Reducir ligeramente la pendiente del bulto a 2.8° para aumentar el tiempo de retención y modular la masa madre con fracción gruesa.";
-            } else {
-                sem090.className = "px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800";
-                sem090.innerText = "ÓPTIMO";
+            for (let i = 0; i < tamicesNombres.length; i++) {
+                const tr = document.createElement('tr');
+                if (i === 4) tr.className = "bg-amber-950/25";
+
+                let semaforoHTML = '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">ÓPTIMO</span>';
+                
+                if (i === 4) {
+                    if (indNorm[i] > 44 || humedad > 4.2 || kv < 3.3 || contrapeso < 65 || areaAbierta < 42) {
+                        semaforoHTML = '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-950 text-rose-400 border border-rose-800">CRÍTICO</span>';
+                        estadoGlobal = "ALERTA CRÍTICA";
+                        colorGlobalBadge = "px-4 py-2 bg-rose-950 text-rose-400 border border-rose-800 rounded-xl text-xs font-bold animate-pulse";
+                        riesgoComercial = "Alto (Fuera de Norma)";
+                        colorRiesgo = "text-rose-400";
+                        eficiencia = 65.0;
+                        textoDiag = "Desviación crítica en franja 0.9 o área abierta insuficiente por grosor de hilo excesivo.";
+                        recInversa = "⚠️ Ajuste Inverso: Seleccionar hilo de 0.30mm para elevar área abierta, regular contrapeso al 80% y secar a <3.5% humedad.";
+                    } else if (indNorm[i] > 40 || humedad > 3.8 || kv < 3.5) {
+                        semaforoHTML = '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-950 text-amber-400 border border-amber-800">ADVERTENCIA</span>';
+                        if (estadoGlobal !== "ALERTA CRÍTICA") {
+                            estadoGlobal = "ADVERTENCIA";
+                            colorGlobalBadge = "px-4 py-2 bg-amber-950 text-amber-400 border border-amber-800 rounded-xl text-xs font-bold animate-pulse";
+                            riesgoComercial = "Moderado";
+                            colorRiesgo = "text-amber-400";
+                            eficiencia = 82.0;
+                            textoDiag = "Tendencia al límite superior en franja 0.9 por restricciones mecánicas de tejido.";
+                            recInversa = "💡 Ajuste Inverso: Revisar tensión de la malla y reducir pendiente a 2.8° para mejorar tiempo de retención.";
+                        }
+                    }
+                }
+
+                tr.innerHTML = `
+                    <td class="p-2.5 font-bold ${i === 4 ? 'text-amber-400' : 'text-white'}">${tamicesNombres[i]}</td>
+                    <td class="p-2.5">${indNorm[i].toFixed(1)}%</td>
+                    <td class="p-2.5 text-slate-400">${retenidoAcumulado[i].toFixed(1)}%</td>
+                    <td class="p-2.5 text-slate-400">${pasanteAcumulado[i].toFixed(1)}%</td>
+                    <td class="p-2.5 text-center">${semaforoHTML}</td>
+                `;
+                tbody.appendChild(tr);
             }
 
             const badgeGeneral = document.getElementById('status-general-badge');
@@ -388,10 +504,13 @@
             document.getElementById('diagnostico-texto').innerText = textoDiag;
             document.getElementById('recomendacion-inversa').innerText = recInversa;
 
-            if (chartInstance) {
-                chartInstance.data.datasets[0].data = [v120, v100, v090, vFinos];
-                chartInstance.data.datasets[1].data = [ideal120, ideal100, ideal090, idealFinos];
-                chartInstance.update();
+            if (chartPasante) {
+                chartPasante.data.datasets[0].data = pasanteAcumulado;
+                chartPasante.update();
+            }
+            if (chartRetenido) {
+                chartRetenido.data.datasets[0].data = retenidoAcumulado;
+                chartRetenido.update();
             }
         }
     </script>
