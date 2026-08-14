@@ -130,6 +130,34 @@
         </section>
 
     </main>
+    <script>
+    // Función para refrescar el Dashboard con los datos guardados en los módulos
+    function actualizarDashboard() {
+        // Obtenemos los valores guardados por los otros módulos (localStorage)
+        const humedad = localStorage.getItem('humedadProceso') || '0.0';
+        const te = localStorage.getItem('teProceso') || '0.00';
+        
+        // Asumiendo que en tu index.html tienes elementos con estos IDs
+        if(document.getElementById('display-humedad')) {
+            document.getElementById('display-humedad').innerText = humedad + '%';
+        }
+        if(document.getElementById('display-te')) {
+            document.getElementById('display-te').innerText = te + ' mm';
+        }
+
+        // Lógica de validación según IRAM 1545-1981
+        const elementoHumedad = document.getElementById('display-humedad');
+        if (parseFloat(humedad) >= 4.0) {
+            elementoHumedad.classList.add('text-red-500'); // Alerta visual
+        } else {
+            elementoHumedad.classList.remove('text-red-500');
+            elementoHumedad.classList.add('text-emerald-400');
+        }
+    }
+
+    // Ejecutar al cargar la página
+    window.onload = actualizarDashboard;
+</script>
 </body>
 </html>
         <!-- SECCIÓN 1, 2 y 3: PANEL DE CONTROL DINÁMICO DE ZARANDA Y CINÉTICA -->
