@@ -1,1 +1,21 @@
-
+<!-- Ejemplo para secado.html -->
+<head>
+    <script src="datos_norma.js"></script> <!-- Importamos las reglas -->
+</head>
+<body class="bg-slate-950 text-slate-200">
+    <!-- Aquí iría tu nav común que ya tienes -->
+    
+    <main class="max-w-7xl mx-auto p-8">
+        <h1 class="text-2xl font-bold text-amber-500 mb-6">Módulo: Variables Térmicas y de Secado</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Tarjeta de control de horno -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800">
+                <h2 class="text-white font-bold">Temperatura de Combustión</h2>
+                <input type="range" class="w-full mt-4" min="180" max="220" oninput="actualizarDashboard(this.value)">
+                <div id="valor-temp" class="text-amber-500 font-mono mt-2">200°C</div>
+            </div>
+            <!-- Otros controles... -->
+        </div>
+    </main>
+</body>
